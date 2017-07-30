@@ -9,8 +9,8 @@ lang.init("D:/TCproject/NLP/paper1/stopWordList(gen).txt","D:/TCproject/NLP/pape
 # sen是句子，senlist是篇章，senllist是所有训练篇章。一开始有文本形式的数组tsenllist，元素为文本形式的tsenlist
 senllist=[]
 for tsenlist in tsenllist:
-    senlistsou=lang.segWord(tsenlist)
-    senlist=help.splitList(senlistsou,"。")
+    senlistsou = lang.segWord(tsenlist)
+    senlist = help.splitList(senlistsou,"。")
     senllist.append(senlist)
 
 wordmap=[]

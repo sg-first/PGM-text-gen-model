@@ -49,3 +49,9 @@ def getmax(senpair,key):
         if i["P"]>maxelm["P"]:
             maxelm=i
     return maxelm[key]
+
+def repeatSplit(list,seq):
+    listB=[]
+    for i in list:
+        listB+=splitList(i,seq)
+    return listB
