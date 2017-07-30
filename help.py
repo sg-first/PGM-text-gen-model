@@ -42,3 +42,10 @@ def splitList(list,sep,result=None):
 
 def tojson(list):
     return json.dumps(list,ensure_ascii=False)
+
+def getmax(senpair,key):
+    maxelm={key:None,"P":0}
+    for i in senpair:
+        if i["P"]>maxelm["P"]:
+            maxelm=i
+    return maxelm[key]

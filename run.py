@@ -1,9 +1,12 @@
 import wordmapOp
+import networkOp
 import help
 import lang
 
 lang.init("D:/TCproject/NLP/paper1/stopWordList(gen).txt","D:/TCproject/NLP/paper1/synonymsList(gen).txt")
-#sen是句子，senlist是篇章，senllist是所有训练篇章。一开始有文本形式的数组tsenllist，元素为文本形式的tsenlist
+
+# 训练部分：
+# sen是句子，senlist是篇章，senllist是所有训练篇章。一开始有文本形式的数组tsenllist，元素为文本形式的tsenlist
 senllist=[]
 for tsenlist in tsenllist:
     senlistsou=lang.segWord(tsenlist)
@@ -13,12 +16,29 @@ for tsenlist in tsenllist:
 wordmap=[]
 for senlist in senllist:
     for sen in senlist:
-        wordmap=wordmapOp.genWordMap(wordmap,sen)
-wordmapOp.normalizedWeight(wordmap,wllist)
-#fix:两层摘要边创建后，从句摘要边向上，逐层训练权值
-#生成部分：先选定高层摘要边，向下产生句摘要边
-for w in qwlist: #qwlist为句摘要边的特征词列表，[char,activateSignal]
-    wordmapOp.wordconduct(wordmap,w[0],w[1])
+        wordmapOp.genWordMap(wordmap,sen)
+wordmapOp.normalizedWeight(wordmap,senllist)
+
+allpnode=[]
+network=[]
+for senlist in senllist:
+    networkOp.genNetwork(network,wordmap,allpnode,senlist)
+networkOp.normalizedWeight(network,senllist)
+
+# fix:两层摘要创建后，从句摘要向上，逐层训练权值
+
+# 底层的生成部分测试：直接激活一些词生成句子，假设选择wnlist
+for wn in wnlist:
+    wordmapOp.nodeConduct(wn,50) # 随便激活一个，先50
 senpair=wordmapOp.getsenpair(wordmap)
-sen=help.getmax(senpair)
-wordmapOp.clearactivation(wordmap)
+sen=wordmapOp.getmaxsen(senpair)
+print(help.listToStr(sen))
+wordmapOp.clearActivation(wordmap)
+
+# 生成部分：先选定摘要块，自动向下生成，假设选择blist
+for b in blist:
+    networkOp.blockConduct(b,50) # 随便激活一个，先50
+blpair=networkOp.getblpair(network)
+blist=networkOp.getmaxblist(blpair)
+print(networkOp.genChapter(blist,wordmap))
+networkOp.clearActivation(network)

@@ -111,11 +111,7 @@ def nextword(n,sen,p,senpair):
             senpair.append({"sen":sen,"P":p})
 
 def getmaxsen(senpair):
-    maxelm={"sen":None,"P":0}
-    for i in senpair:
-        if i["P"]>maxelm["P"]:
-            maxelm=i
-    return maxelm["sen"]
+    return help.getmax(senpair,"sen")
 
 def clearActivation(wordmap):
     for n in wordmap:
