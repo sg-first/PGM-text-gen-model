@@ -13,7 +13,7 @@ def listToStr(list,sep=''):
 def readTXT(path):
     return open(path,'r').read()
 
-def index(list,sub):
+def getindex(list,sub):
     if sub<0 or sub>=len(list):
         return None
     else:

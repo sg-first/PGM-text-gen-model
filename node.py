@@ -12,13 +12,13 @@ class node:
     activation = 0
     firstp = 0  # 该词出现在句首的次数
 
-    def changeNode(self, char, delta, nodelist):  # Private
+    def changeNode(self, anode, delta, nodelist):  # Private
         for nunion in nodelist:
-            if nunion["node"].char == char:
+            if nunion["node"].char == anode.char:
                 nunion["P"] += delta
                 return nunion
         # 没有，添加
-        newelm={"node":node(char),"P":delta,"isPass":False,"stopList":[]}
+        newelm={"node":anode,"P":delta,"isPass":False,"stopList":[]}
         nodelist.append(newelm)
         return newelm
 
@@ -31,35 +31,35 @@ class node:
         newStopWord=stopWord(word,delta)
         elmlist.append(newStopWord)
 
-    def autoChangeBehindNode(self,word1,word2,delta):
+    def autoChangeBehindNode(self,node1,node2,word1,delta):
         if not lang.isStopWord(word1):
-            self.changeNode(word1, delta, self.behindNode)
+            self.changeNode(node1, delta, self.behindNode)
             return
         else:
-            if word2 is None:  # 上层要至少保证word1不是None
+            if node2 is None:  # 上层要至少保证word1不是None（不越界）
                 self.addStopWord(self.behindStop, word1, delta)  # word1为尾词停止，调整behindStop
                 return
             else:
-                elm = self.changeNode(word2, delta, self.behindNode)
-                self.addStopWord(elm[3], word1, delta)
+                elm = self.changeNode(node2, delta, self.behindNode)
+                self.addStopWord(elm["stopList"], word1, delta)
                 return
 
-    def autoChangeFrontNode(self,word1,word2,delta):
+    def autoChangeFrontNode(self,node1,node2,word1,delta):
         if not lang.isStopWord(word1):
-            self.changeNode(word1, delta, self.frontNode)
+            self.changeNode(node1, delta, self.frontNode)
             return
         else:
-            if word2 is None:  # 上层要至少保证word1不是None
+            if node2 is None:  # 上层要至少保证word1不是None
                 self.addStopWord(self.frontStop, word1, delta)  # word1为尾词停止，调整frontStop
                 return
             else:
-                elm = self.changeNode(word2,delta,self.frontNode)
-                self.addStopWord(elm[3], word1, delta)
+                elm = self.changeNode(node2,delta,self.frontNode)
+                self.addStopWord(elm["stopList"], word1, delta)
                 return
 
     def addSynonyms(self,n):
         for spair in self.synonymNode:
-            if spair["node"].char==self.char: #正面有，反面就有，正面没有，反面就没有
+            if spair["node"].char==self.char: #正面有，反面就有，反之亦然
                 return
         self.synonymNode.append({"node": n, "isPass": False})
         n.synonymNode.append({"node": self, "isPass": False})

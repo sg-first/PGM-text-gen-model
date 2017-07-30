@@ -9,21 +9,20 @@ def genWordMap(wordmap,sen):
     # 先把char都转换成node
     for char in sen:
         if lang.isStopWord(char):
-            wnlist.append(None) #停用词
+            wnlist.append(None) # 停用词
         else:
             wnlist.append(node.findornew(wordmap,char))
     # 然后进行接边的连接
     for n1 in range(len(wnlist)):
-        if lang.isStopWord(sen[w1]): # 本身就是停用词，跳过
+        if wnlist[n1] is None: # 本身就是停用词，跳过
             continue
-        nw1=node.findornew(wordmap,sen[w1])
-        #特殊位置检测
-        if w1 == 1: #第一位，不连接前向接边
-            nw1.firstp += 1
+        # 特殊位置检测
+        if n1 == 1: # 第一位，不连接前向接边
+            wnlist[n1].firstp += 1
         else:
-            nw1.autoChangeBehindNode(sen[w1+1],help.index(sen,w1+2),1)
-        if w1!=len(sen)-1: #是最后一位，不连接后向接边
-            nw1.autoChangeFrontNode(sen[w1-1],help.index(sen,w1-2),1)
+            wnlist[n1].autoChangeBehindNode(wnlist[n1+1],help.getindex(wnlist,n1+2),sen[n1+1],1)
+        if n1!=len(sen)-1: # 是最后一位，不连接后向接边
+            wnlist[n1].autoChangeFrontNode(wnlist[n1-1],help.getindex(wnlist,n1-2),sen[n1-1],1)
 
 def caluwordCount(n,senllist):
     wordCount = 0
