@@ -8,7 +8,7 @@ import copy
 import random
 
 def genBlock(wordmap,sen,allpnode):
-    wnodeList=node.charFindNodeList(wordmap,sen)
+    wnodeList=node.wordFindNodeList(wordmap,sen)
     sum=lang.summary(sen)
     block=[]
 

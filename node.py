@@ -3,7 +3,7 @@ import parameter
 import help
 
 class node:
-    char = ""
+    word = ""
     behindStop=[]  # [stopWord],句尾停用词
     frontStop=[]  # 句首停用词
     behindNode = []  # [{node,P,isPass,[stopWord]}]，后向接边
@@ -15,7 +15,7 @@ class node:
 
     def changeNode(self, anode, delta, nodelist):  # Private
         for nunion in nodelist:
-            if nunion["node"].char == anode.char:
+            if nunion["node"].word == anode.word:
                 nunion["P"] += delta
                 return nunion
         # 没有，添加
@@ -25,7 +25,7 @@ class node:
 
     def addStopWord(self,elmlist,word,delta):  # Private
         for i in elmlist:
-            if i.char==word:
+            if i.word==word:
                 i.p+=delta
                 return
         # 没有，添加
@@ -60,20 +60,20 @@ class node:
 
     def addSynonyms(self,n):
         for spair in self.synonymNode:
-            if spair["node"].char==self.char: #正面有，反面就有，反之亦然
+            if spair["node"].word==self.word: #正面有，反面就有，反之亦然
                 return
         self.synonymNode.append({"node": n, "isPass": False})
         n.synonymNode.append({"node": self, "isPass": False})
 
-    def __init__(self, char):
-        self.char = char
+    def __init__(self, word):
+        self.word = word
 
 class stopWord:
-    char = ""
+    word = ""
     p = 0
 
-    def __init__(self,char,delta):
-        self.char=char
+    def __init__(self,word,delta):
+        self.word=word
         self.p=delta
 
 def genStopWord(elmlist):
@@ -82,28 +82,28 @@ def genStopWord(elmlist):
     for i in elmlist:
         if i.p>maxp:
             maxp=i.p
-            maxstop=i.char
+            maxstop=i.word
     return maxstop
 
-def charFindNode(wordmap,char):
+def wordFindNode(wordmap,word):
     for n in wordmap:
-        if n.char==char:
+        if n.word==word:
             return n
     return None
 
-def findornew(wordmap,char):
-    nw1 = charFindNode(wordmap, char)
+def findornew(wordmap,word):
+    nw1 = wordFindNode(wordmap, word)
     if nw1 is None:
-        nw1 = node(char)
+        nw1 = node(word)
         wordmap.append(nw1)
     return nw1
 
-def charFindNodeList(wordmap,charList):
+def wordFindNodeList(wordmap,wordList):
     result=[]
     for n in wordmap:
-        for c in range(charList):
-            if n.char==charList[c]:
+        for c in range(wordList):
+            if n.word==wordList[c]:
                 result.append(n)
-                charList=help.listDel(charList,c)
+                wordList=help.listDel(wordList,c)
                 break
     return result

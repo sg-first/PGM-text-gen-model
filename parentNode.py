@@ -6,13 +6,13 @@ import wordmapOp
 #产生一个摘要块序列，序列中每个摘要块的每个元素向下激发，产生实际的句子，连接起来即为篇章
 
 class parentNode:
-    char = "" # 标记的摘要词
+    word = "" # 标记的摘要词
     sonNode= [] #[{node,activation}]，子节点
     sub = -1
 
     def addsonNode(self,wnode,activation):
         for sonpair in self.sonNode:
-            if sonpair["node"].char == wnode.char:
+            if sonpair["node"].word == wnode.word:
                 return
         self.sonNode.append({"node":wnode,"activation":activation}) #没有再添加
 
@@ -21,17 +21,17 @@ class parentNode:
             name='allpnode['+str(self.sub)+'].son[\"activation\"]'
             wordmapOp.nodeConduct(son["node"],son["activation"],name)
 
-    def __init__(self,char):
-        self.char=char
+    def __init__(self,word):
+        self.word=word
 
-def charFindNode(list,char):
-    return node.charFindNode(list,char)
+def wordFindNode(list,word):
+    return node.wordFindNode(list,word)
 
 # allpnode为所有parentNode的集合，这样做的目的是使得所有同样标记的pnode共用一个sonNode（即不重复）
-def findornew(allpnode,char):
-    nw1 = charFindNode(allpnode, char)
+def findornew(allpnode,word):
+    nw1 = wordFindNode(allpnode, word)
     if nw1 is None:
-        nw1 = parentNode(char)
+        nw1 = parentNode(word)
         allpnode.append(nw1)
         nw1.sub=len(allpnode)-1
     return nw1

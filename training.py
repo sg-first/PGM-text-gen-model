@@ -9,10 +9,10 @@ slackVariable=[]
 
 def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
     for wn in wordmap:
-        if wn.activation>parameter.minactive and not help.isExist(relSen,wn.char):
+        if wn.activation>parameter.minactive and not help.isExist(relSen,wn.word):
             constraints.append(wn.caluForm+'<='+str(parameter.minactive))
             continue
-        if wn.activation<parameter.minactive and help.isExist(relSen,wn.char):
+        if wn.activation<parameter.minactive and help.isExist(relSen,wn.word):
             constraints.append(wn.caluForm+'>='+str(parameter.minactive))
             continue
 

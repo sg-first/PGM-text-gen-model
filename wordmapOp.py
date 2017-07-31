@@ -6,12 +6,12 @@ import math
 
 def genWordMap(wordmap,sen):
     wnlist=[]
-    # 先把char都转换成node
-    for char in sen:
-        if lang.isStopWord(char):
+    # 先把word都转换成node
+    for word in sen:
+        if lang.isStopWord(word):
             wnlist.append(None) # 停用词
         else:
-            wnlist.append(node.findornew(wordmap,char))
+            wnlist.append(node.findornew(wordmap,word))
     # 然后进行接边的连接
     for n1 in range(len(wnlist)):
         if wnlist[n1] is None: # 本身就是停用词，跳过
@@ -28,7 +28,7 @@ def caluwordCount(n,senllist):
     wordCount = 0
     for senlist in senllist:
         for sen in senlist:
-            wordCount += help.caluCount(sen, n.char)
+            wordCount += help.caluCount(sen, n.word)
     return wordCount
 
 def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
@@ -39,9 +39,9 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
     for n in wordmap:
         # 遍历wordmap，给所有node添加同义边
         for n2 in wordmap:
-            if n.char==n2.char:
+            if n.word==n2.word:
                 continue # 不搞自己
-            if lang.isSynonyms(n.char,n2.char):
+            if lang.isSynonyms(n.word,n2.word):
                 n.addSynonyms(n2)
         # 正式的归一化过程
         n.firstp /= senCount  # 句首次数归一化
