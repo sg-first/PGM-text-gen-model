@@ -50,14 +50,14 @@ def init(swpath,spath):
 def isSynonyms(word1,word2):
     return synonyms.isSynonyms(word1,word2)
 
-def getSim(sen1,sen2): # 接受list形式的sen
-    if len(sen1)<=5 or len(sen2)<=5:
+def getSim(sen1,sen2,minlen=5,topK=5): # 接受list形式的sen
+    if len(sen1)<=minlen or len(sen2)<=minlen:
         return -1
     sen1=help.listToStr(sen1)
     sen2 = help.listToStr(sen2)
-    s1sum=set(summary(sen1))
-    s2sum=set(summary(sen2))
+    s1sum=set(summary(sen1,topK=topK))
+    s2sum=set(summary(sen2,topK=topK))
     return len(s1sum&s2sum)/len(s1sum|s2sum)
 
-def isSim(sen1,sen2):
-    return getSim(sen1,sen2)>=parameter.simThreshold
+def isSim(sen1,sen2,minlen=5,topK=5):
+    return getSim(sen1,sen2,minlen,topK)>=parameter.simThreshold
