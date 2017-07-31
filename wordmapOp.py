@@ -56,21 +56,24 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
             for sw in nunion["stopList"]:
                 sw.p/=wordCount
     
-def nodeConduct(wnode,activateSignal):
+def nodeConduct(wnode,activateSignal,formDelta):
     if activateSignal<parameter.activeThreshold:
         return
     # 条件符合，进行传导
     wnode.activation+=activateSignal #乘边权的过程放在递归前，如下
+    wnode.caluForm+='+'+formDelta
     for nunion in wnode.behindNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            #这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
-            #一次，也同样禁传自己，二者就不会重复传递
-            nodeConduct(nunion["node"],activateSignal*nunion["P"])
+            # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
+            # 一次，也同样禁传自己，二者就不会重复传递
+            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
+            nodeConduct(nunion["node"],activateSignal*nunion["P"],newformDelta)
     for nunion in wnode.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            nodeConduct(nunion["node"],activateSignal*nunion["P"])
+            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
+            nodeConduct(nunion["node"],activateSignal*nunion["P"],newformDelta)
     for pair in wnode.synonymNode:
         if not pair["isPass"]:
             pair["isPass"]=True
@@ -101,10 +104,10 @@ def nextword(n,sen,p,senpair):
                 sen.append(stopword)
             sen.append(n)
             nextword(nunion["node"],sen,newp,senpair)
-            #这里无限扩展应该并没有问题，因为训练可以使得初激活值调整到生成正常长度的合理句子
+            # 这里无限扩展应该并没有问题，因为训练可以使得初激活值调整到生成正常长度的合理句子
 
     if isEnd: #一个都找不到，即结束
-        #产生句尾停用词
+        # 产生句尾停用词
         stopword=node.genStopWord(n.behindStop)
         if not stopword is None:
             sen.append(stopword)

@@ -8,13 +8,15 @@ import wordmapOp
 class parentNode:
     char = "" # 标记的摘要词
     sonNode= [] #[{node,activation}]，子节点
+    sub = -1
 
     def addsonNode(self,wnode,activation):
-        self.sonNode.append({"node":wnode,"activation":activation}) #训练前的激活值先置1吧
+        self.sonNode.append({"node":wnode,"activation":activation})
 
     def activeSon(self):
         for son in self.sonNode:
-            wordmapOp.nodeConduct(son["node"],son["activation"])
+            name='allpnode['+str(self.sub)+'].son[\"activation\"]'
+            wordmapOp.nodeConduct(son["node"],son["activation"],name)
 
     def __init__(self,char):
         self.char=char
@@ -28,6 +30,7 @@ def findornew(allpnode,char):
     if nw1 is None:
         nw1 = parentNode(char)
         allpnode.append(nw1)
+        nw1.sub=len(allpnode)-1
     return nw1
 
 # 注意，pnBlock的集合，即network可完全通过allpnode中的元素自定义而不用经由训练文本自动生成

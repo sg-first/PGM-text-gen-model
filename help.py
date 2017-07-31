@@ -55,3 +55,15 @@ def repeatSplit(list,seq):
     for i in list:
         listB+=splitList(i,seq)
     return listB
+
+def repeatSplitStr(list,seq):
+    listB=[]
+    for i in list:
+        listB+=i.split(seq)
+    return listB
+
+def isExist(list,elm):
+    for i in list:
+        if i==elm:
+            return True
+    return False

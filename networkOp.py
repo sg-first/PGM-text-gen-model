@@ -5,6 +5,7 @@ import parameter
 import help
 import math
 import copy
+import random
 
 def genBlock(wordmap,sen,allpnode):
     wnodeList=node.charFindNodeList(wordmap,sen)
@@ -22,7 +23,10 @@ def genBlock(wordmap,sen,allpnode):
                     befound=True
                     break
             if not befound: # 找不到再添加
-                nw1.addsonNode(wnode,1)
+                if parameter.radomWeight:
+                    nw1.addsonNode(wnode,random.randint(1,300)) #针对于未使用贝叶斯的情况，先调300
+                else:
+                    nw1.addsonNode(wnode,1)
 
         return parentNode.pnBlock(block,sen)
 

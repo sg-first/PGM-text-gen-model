@@ -11,6 +11,7 @@ class node:
     synonymNode = [] # [{node,isPass}]，同义边
     activation = 0
     firstp = 0  # 该词出现在句首的次数
+    caluForm = ''
 
     def changeNode(self, anode, delta, nodelist):  # Private
         for nunion in nodelist:
