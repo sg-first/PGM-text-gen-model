@@ -18,7 +18,7 @@ def genBlock(wordmap,sen,allpnode):
         # 产生全连接子节点
         for wnode in wnodeList:
             if parameter.radomWeight:
-                nw1.addsonNode(wnode,random.randint(1,300)) #针对于未使用贝叶斯的情况，先调300
+                nw1.addsonNode(wnode,random.randint(1,500)) #针对于未使用贝叶斯的情况，先调300
             else:
                 nw1.addsonNode(wnode,1)
 
