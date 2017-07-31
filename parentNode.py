@@ -11,7 +11,10 @@ class parentNode:
     sub = -1
 
     def addsonNode(self,wnode,activation):
-        self.sonNode.append({"node":wnode,"activation":activation})
+        for sonpair in self.sonNode:
+            if sonpair["node"].char == wnode.char:
+                return
+        self.sonNode.append({"node":wnode,"activation":activation}) #没有再添加
 
     def activeSon(self):
         for son in self.sonNode:

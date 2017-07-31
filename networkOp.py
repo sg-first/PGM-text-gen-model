@@ -17,16 +17,10 @@ def genBlock(wordmap,sen,allpnode):
         block.append(nw1)
         # 产生全连接子节点
         for wnode in wnodeList:
-            befound = False
-            for sonpair in nw1.sonNode:
-                if sonpair["node"].char==wnode.char:
-                    befound=True
-                    break
-            if not befound: # 找不到再添加
-                if parameter.radomWeight:
-                    nw1.addsonNode(wnode,random.randint(1,300)) #针对于未使用贝叶斯的情况，先调300
-                else:
-                    nw1.addsonNode(wnode,1)
+            if parameter.radomWeight:
+                nw1.addsonNode(wnode,random.randint(1,300)) #针对于未使用贝叶斯的情况，先调300
+            else:
+                nw1.addsonNode(wnode,1)
 
         return parentNode.pnBlock(block,sen)
 
@@ -49,7 +43,7 @@ def genNetwork(network,wordmap,allpnode,senlist):
 def caluSimCount(sen,network):
     count=0
     for b in network:
-        if lang.isSim(sen,b.sen): # fix:getSim算法能否满足全概率公式？
+        if lang.isSim(sen,b.sen):
             count+=1
     return count
 

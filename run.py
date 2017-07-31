@@ -25,7 +25,9 @@ for senlist in senllist:
     networkOp.genNetwork(network,wordmap,allpnode,senlist)
 networkOp.normalizedWeight(network,senllist)
 
-# fix:两层摘要创建后，从句摘要向上，逐层训练权值
+#训练
+#先逐个直接激活pnBlock（不传接边，仅仅激发子节点）
+#根据结果训练权值
 
 # 底层的生成部分测试：直接激活一些词生成句子，假设选择wnlist
 for wn in wnlist:

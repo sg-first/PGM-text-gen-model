@@ -77,7 +77,7 @@ def nodeConduct(wnode,activateSignal,formDelta):
     for pair in wnode.synonymNode:
         if not pair["isPass"]:
             pair["isPass"]=True
-            nodeConduct(pair["node"],activateSignal) #同义边传导无衰减
+            nodeConduct(pair["node"],activateSignal,wnode.caluForm) #同义边传导无衰减
 
 def getsenpair(wordmap):
     senpair = []  # [{sen,P}]
