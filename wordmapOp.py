@@ -44,18 +44,23 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
             if lang.isSynonyms(n.word,n2.word):
                 n.addSynonyms(n2)
         # 正式的归一化过程
-        n.firstp /= senCount  # 句首次数归一化
-        wordCount=caluwordCount(n,senllist) # 首先计算该词在整个训练文本中出现的次数（由于停用词不会在wordmap中出现，所以数量上也不会把停用词算在内）
+        n.firstp /= senCount  # 句首次数归一化（使用等价贝叶斯后这也是真归一化）
+        n.wordCount=caluwordCount(n,senllist) # 首先计算该词在整个训练文本中出现的次数（由于停用词不会在wordmap中出现，所以数量上也不会把停用词算在内）
         # 边权归一化
         for nunion in n.behindNode:
-            nunion["P"]/=wordCount
+            nunion["count"]=nunion["P"]
+            nunion["P"]/=n.wordCount #使用等价贝叶斯后，P仅作为边权，而句子概率使用count计算
             for sw in nunion["stopList"]:
-                sw.p/=wordCount
+                sw.p/=n.wordCount #停用词依然真归一化
         for nunion in n.frontNode:
-            nunion["P"] /= wordCount
+            nunion["count"] = nunion["P"]
+            nunion["P"] /= n.wordCount
             for sw in nunion["stopList"]:
-                sw.p/=wordCount
-    
+                sw.p/=n.wordCount
+
+def equBayes(char,word):
+    return word*2/char
+
 def nodeConduct(wnode,activateSignal,formDelta):
     if activateSignal<parameter.activeThreshold:
         return
@@ -67,13 +72,15 @@ def nodeConduct(wnode,activateSignal,formDelta):
             nunion["isPass"]=True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
-            nodeConduct(nunion["node"],activateSignal*nunion["P"],newformDelta)
+            updateDelta = equBayes(wnode.wordCount, nunion["count"])
+            newformDelta = wnode.caluForm + '*' + str(updateDelta)
+            nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
     for nunion in wnode.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
-            nodeConduct(nunion["node"],activateSignal*nunion["P"],newformDelta)
+            updateDelta = equBayes(wnode.wordCount, nunion["count"])
+            newformDelta = wnode.caluForm + '*' + str(updateDelta)
+            nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
     for pair in wnode.synonymNode:
         if not pair["isPass"]:
             pair["isPass"]=True
@@ -88,7 +95,7 @@ def getsenpair(wordmap):
             stopword=node.genStopWord(n.frontStop)
             if not stopword is None:
                 sen.append(stopword)
-            nextword(n,sen,math.log2(n.firstp),senpair)
+            nextword(n,sen,n.firstp,senpair)
     return senpair
 
 def nextword(n,sen,p,senpair):

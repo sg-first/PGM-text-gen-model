@@ -12,6 +12,7 @@ class node:
     activation = 0
     firstp = 0  # 该词出现在句首的次数
     caluForm = ''
+    wordCount = 0 #在训练集中出现次数
 
     def changeNode(self, anode, delta, nodelist):  # Private
         for nunion in nodelist:
