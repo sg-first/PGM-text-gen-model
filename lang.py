@@ -61,3 +61,6 @@ def getSim(sen1,sen2,minlen=5,topK=5): # 接受list形式的sen
 
 def isSim(sen1,sen2,minlen=5,topK=5):
     return getSim(sen1,sen2,minlen,topK)>=parameter.simThreshold
+
+def equBayes(char,word):
+    return word*2/char

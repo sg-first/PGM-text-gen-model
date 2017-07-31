@@ -58,9 +58,6 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
             for sw in nunion["stopList"]:
                 sw.p/=n.wordCount
 
-def equBayes(char,word):
-    return word*2/char
-
 def nodeConduct(wnode,activateSignal,formDelta):
     if activateSignal<parameter.activeThreshold:
         return
@@ -72,13 +69,13 @@ def nodeConduct(wnode,activateSignal,formDelta):
             nunion["isPass"]=True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            updateDelta = equBayes(wnode.wordCount, nunion["count"])
+            updateDelta = lang.equBayes(wnode.wordCount, nunion["count"])
             newformDelta = wnode.caluForm + '*' + str(updateDelta)
             nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
     for nunion in wnode.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            updateDelta = equBayes(wnode.wordCount, nunion["count"])
+            updateDelta = lang.equBayes(wnode.wordCount, nunion["count"])
             newformDelta = wnode.caluForm + '*' + str(updateDelta)
             nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
     for pair in wnode.synonymNode:

@@ -63,12 +63,14 @@ def normalizedWeight(network,senllist):
                 b.frontNode=copy.deepcopy(b2.frontNode) # 再把b2的拿给b
         # 正式的归一化过程
         b.firstp/=chapterCount  # 句首次数归一化
-        simCount=caluSimCount(b.sen,network) # 首先计算该句在整个训练文本中出现的次数
+        b.simCount=caluSimCount(b.sen,network) # 首先计算该句在整个训练文本中出现的次数（按相似句子近似）
         # 边权归一化
         for sunion in b.behindNode:
-            sunion["P"]/=simCount
+            sunion["count"]=sunion["P"]
+            sunion["P"] /= b.simCount
         for sunion in b.frontNode:
-            sunion["P"]/=simCount
+            sunion["count"] = sunion["P"]
+            sunion["P"] /= b.simCount
 
 def blockConduct(b,activateSignal):
     if activateSignal < parameter.activeThresholdB:
@@ -80,11 +82,11 @@ def blockConduct(b,activateSignal):
             nunion["isPass"] = True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            blockConduct(nunion["node"], activateSignal * nunion["P"])
+            blockConduct(nunion["node"], activateSignal * lang.equBayes(b.simCount,nunion["count"]))
     for nunion in b.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"] = True
-            blockConduct(nunion["node"], activateSignal * nunion["P"])
+            blockConduct(nunion["node"], activateSignal * lang.equBayes(b.simCount,nunion["count"]))
 
 def getblpair(network): # 生成概率大的块序列
     blpair=[] # [{blockList,P}]

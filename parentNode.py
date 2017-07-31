@@ -44,6 +44,7 @@ class pnBlock:
     frontNode = []  # 前向接边
     firstp = 0 #该摘要块在段落中出现在首的次数
     activation = 0
+    simCount = 0
 
     def dirChangeNode(self,sen,apnBlock,delta,nodelist):
         # 首先通过sen从已有的接边里找，找到就直接改P
