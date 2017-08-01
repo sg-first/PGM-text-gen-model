@@ -67,3 +67,6 @@ def isExist(list,elm):
         if i==elm:
             return True
     return False
+
+def limitDigits(num):
+    return float(("%.2f" % num))

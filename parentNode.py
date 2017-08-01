@@ -7,7 +7,7 @@ import wordmapOp
 
 class parentNode:
     word = "" # 标记的摘要词
-    sonNode= [] #[{node,activation}]，子节点
+    sonNode = None #[{node,activation}]，子节点
     sub = -1
 
     def addsonNode(self,wnode,activation):
@@ -23,6 +23,7 @@ class parentNode:
 
     def __init__(self,word):
         self.word=word
+        self.sonNode = []
 
 def wordFindNode(list,word):
     return node.wordFindNode(list,word)
@@ -38,13 +39,31 @@ def findornew(allpnode,word):
 
 # 注意，pnBlock的集合，即network可完全通过allpnode中的元素自定义而不用经由训练文本自动生成
 class pnBlock:
-    sen = None  # 标记的所描述的那个原始句子
+    sen = ""  # 标记的所描述的那个原始句子
     block = None #[parentNode]
-    behindNode = []  # [{pnBlock,P,isPass}]，后向接边
-    frontNode = []  # 前向接边
+    behindNode = None  # [{pnBlock,P,isPass}]，后向接边
+    frontNode = None  # 前向接边
+    behindNodeStr = None
+    frontNoneStr = None
     firstp = 0 #该摘要块在段落中出现在首的次数
     activation = 0
-    simCount = 0
+    simCount = 1
+
+    def unionToStr(self,union):  # Private
+        return "{"+union["pnBlock"].sen+","+str(union["P"])+"}"
+
+    def genNodeStr(self,list):  # Private
+        nodestr=""
+        for union in list:
+            nodestr+=self.unionToStr(union)+","
+        return nodestr
+
+    def relgenNodeStr(self):
+        self.behindNodeStr=self.genNodeStr(self.behindNode)
+        self.frontNoneStr=self.genNodeStr(self.frontNode)
+
+    def isStrNotNone(self):
+        return (not self.behindNodeStr is None) and (not self.frontNoneStr is None)
 
     def dirChangeNode(self,sen,apnBlock,delta,nodelist):
         # 首先通过sen从已有的接边里找，找到就直接改P
@@ -85,3 +104,5 @@ class pnBlock:
     def __init__(self,block,sen):
         self.block=block
         self.sen=sen
+        self.behindNode = []
+        self.frontNode = []

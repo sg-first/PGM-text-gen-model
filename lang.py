@@ -57,10 +57,14 @@ def getSim(sen1,sen2,minlen=5,topK=5): # 接受list形式的sen
     sen2 = help.listToStr(sen2)
     s1sum=set(summary(sen1,topK=topK))
     s2sum=set(summary(sen2,topK=topK))
-    return len(s1sum&s2sum)/len(s1sum|s2sum)
+    if len(s1sum)==0 or len(s2sum)==0:
+        return -1
+    else:
+        return len(s1sum&s2sum)/len(s1sum|s2sum)
 
 def isSim(sen1,sen2,minlen=5,topK=5):
     return getSim(sen1,sen2,minlen,topK)>=parameter.simThreshold
 
 def equBayes(char,word):
-    return word*2/char
+    result=word*2/char
+    return help.limitDigits(result)

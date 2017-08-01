@@ -17,12 +17,12 @@ def genWordMap(wordmap,sen):
         if wnlist[n1] is None: # 本身就是停用词，跳过
             continue
         # 特殊位置检测
-        if n1 == 1: # 第一位，不连接前向接边
+        if n1 == 0: # 第一位，不连接前向接边
             wnlist[n1].firstp += 1
         else:
-            wnlist[n1].autoChangeBehindNode(wnlist[n1+1],help.getindex(wnlist,n1+2),sen[n1+1],1)
-        if n1!=len(sen)-1: # 是最后一位，不连接后向接边
-            wnlist[n1].autoChangeFrontNode(wnlist[n1-1],help.getindex(wnlist,n1-2),sen[n1-1],1)
+            wnlist[n1].autoChangeFrontNode(wnlist[n1 - 1], help.getindex(wnlist, n1 - 2), sen[n1 - 1], 1)
+        if n1!=len(sen)-1: # 不是最后一位，连接后向接边
+            wnlist[n1].autoChangeBehindNode(wnlist[n1 + 1], help.getindex(wnlist, n1 + 2), sen[n1 + 1], 1)
 
 def caluwordCount(n,senllist):
     wordCount = 0
@@ -49,12 +49,12 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
         # 边权归一化
         for nunion in n.behindNode:
             nunion["count"]=nunion["P"]
-            nunion["P"]/=n.wordCount #使用等价贝叶斯后，P仅作为边权，而句子概率使用count计算
+            nunion["P"] = help.limitDigits(nunion["P"] / n.wordCount*parameter.stackWeights) #使用等价贝叶斯后，P仅作为边权，而句子概率使用count计算
             for sw in nunion["stopList"]:
                 sw.p/=n.wordCount #停用词依然真归一化
         for nunion in n.frontNode:
             nunion["count"] = nunion["P"]
-            nunion["P"] /= n.wordCount
+            nunion["P"] = help.limitDigits(nunion["P"] / n.wordCount*parameter.stackWeights)
             for sw in nunion["stopList"]:
                 sw.p/=n.wordCount
 
@@ -99,7 +99,7 @@ def nextword(n,sen,p,senpair):
     isEnd=True #是否到达本次递归结束时（找不到下一个词）
 
     for nunion in n.behindNode:
-        newp=p+math.log2(nunion["P"])
+        newp=p*lang.equBayes(n.wordCount, nunion["count"])
         if n.activation>parameter.minactive and newp>parameter.minp:
             isEnd=False #能找到一个就不结束
             #产生过渡停用词

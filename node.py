@@ -4,11 +4,11 @@ import help
 
 class node:
     word = ""
-    behindStop=[]  # [stopWord],句尾停用词
-    frontStop=[]  # 句首停用词
-    behindNode = []  # [{node,P,isPass,[stopWord]}]，后向接边
-    frontNode = []  # 前向接边
-    synonymNode = [] # [{node,isPass}]，同义边
+    behindStop = None  # [stopWord],句尾停用词
+    frontStop = None  # 句首停用词
+    behindNode = None  # [{node,P,isPass,[stopWord]}]，后向接边
+    frontNode = None  # 前向接边
+    synonymNode = None # [{node,isPass}]，同义边
     activation = 0
     firstp = 0  # 该词出现在句首的次数
     caluForm = ''
@@ -68,6 +68,11 @@ class node:
 
     def __init__(self, word):
         self.word = word
+        self.behindStop = []
+        self.frontStop = []
+        self.behindNode = []
+        self.frontNode = []
+        self.synonymNode = []
 
 class stopWord:
     word = ""
@@ -99,10 +104,10 @@ def findornew(wordmap,word):
         wordmap.append(nw1)
     return nw1
 
-def wordFindNodeList(wordmap,wordList):
+def wordFindNodeList(wordmap,wordList): #批量转换
     result=[]
     for n in wordmap:
-        for c in range(wordList):
+        for c in range(len(wordList)): #每个词都遍历一遍
             if n.word==wordList[c]:
                 result.append(n)
                 wordList=help.listDel(wordList,c)
