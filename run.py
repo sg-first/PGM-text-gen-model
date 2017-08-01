@@ -2,6 +2,7 @@ import wordmapOp
 import networkOp
 import help
 import lang
+import training
 
 lang.init("D:/TCproject/NLP/paper1/stopWordList(gen).txt","D:/TCproject/NLP/paper1/synonymsList(gen).txt")
 
@@ -25,13 +26,13 @@ for senlist in senllist:
     networkOp.genNetwork(network,wordmap,allpnode,senlist)
 networkOp.normalizedWeight(network,senllist)
 
-#训练
-#先逐个直接激活pnBlock（不传接边，仅仅激发子节点）
-#根据结果训练权值
+# 训练
+for b in network:
+    training.relTrain(b,wordmap,allpnode)
 
 # 底层的生成部分测试：直接激活一些词生成句子，假设选择wnlist
 for wn in wnlist:
-    wordmapOp.nodeConduct(wn,50) # 随便激活一个，先50
+    wordmapOp.nodeConduct(wn,50,'nothing') # 随便激活一个，先50
 senpair=wordmapOp.getsenpair(wordmap)
 sen=wordmapOp.getmaxsen(senpair)
 print(help.listToStr(sen))

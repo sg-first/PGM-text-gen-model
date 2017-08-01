@@ -70,3 +70,9 @@ def updateWeights(allpnode):
     targetVariable.clear()
     weightIndex.clear()
     slackVariable.clear()
+
+def relTrain(apbBlock,wordmap,allpnode):
+    apbBlock.activeBlock(wordmap) #只激活，不用管生成的是什么
+    selectTarget(wordmap,apbBlock.sen)
+    train()
+    updateWeights(allpnode)
