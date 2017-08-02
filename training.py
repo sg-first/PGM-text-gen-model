@@ -55,10 +55,10 @@ def mergeCoefficient(monomialList2,sub):
         for s in same:
             monomialList2[sub]['coefficient']+=monomialList2[s]['coefficient']
         # 合并后删掉被合并节点
-        for s in same:
-            del monomialList2[s]
-            for s2 in range(len(same)): #移动下标
-                if same[s2]>s:
+        for s in range(len(same)):
+            del monomialList2[same[s]]
+            for s2 in range(s,len(same)): #移动下标
+                if same[s2]>same[s]:
                     same[s2]-=1
         return mergeCoefficient(monomialList2, 0) # 下标状况变化后，从0重新开始
 

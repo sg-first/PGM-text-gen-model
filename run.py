@@ -4,8 +4,8 @@ import help
 import lang
 import training
 
-lang.init("D:/TCproject/NLP/paper1/stopWordList(gen).txt","D:/TCproject/NLP/paper1/synonymsList(gen).txt")
-txt=help.readTXT("D:/123.txt")
+lang.init("D:/NLP/paper1/stopWordList(gen).txt","D:/NLP/paper1/synonymsList(gen).txt")
+txt=help.readTXT("D:/NLP/paper1/123.txt")
 tsenllist=txt.split("\n")
 print("载入词典与读取训练文本完成！")
 
