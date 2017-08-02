@@ -2,7 +2,6 @@ import help
 import parameter
 import node
 import lang
-import math
 
 def genWordMap(wordmap,sen):
     wnlist=[]

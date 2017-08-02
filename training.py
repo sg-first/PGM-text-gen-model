@@ -74,10 +74,11 @@ def creatModel():
     return pulp.LpProblem(sense=pulp.LpMinimize)
 
 def addVar(name):
-    var=pulp.LpVariable(name,lowBound=0)
+    varname='targetVariable['+str(len(targetVariable))+']'
+    var=pulp.LpVariable(varname,lowBound=0)
     weightIndex[name]=var
     targetVariable.append(var)
-    return 'targetVariable['+str(len(targetVariable)-1)+']'
+    return varname
 
 def genTargetFunction(model,num): #松弛变量序号从0到num，该函数必须在proceCondition之前调用
     tf=''
@@ -127,7 +128,7 @@ def updateWeights(allpnode):
 
 def relTrain(apbBlock,wordmap,allpnode):
     apbBlock.activeBlock(wordmap,False) #只激活，不用管生成的是什么，而且不能清记录，训练后手动重置
-    selectTarget(wordmap,apbBlock.sen)
+    selectTarget(wordmap,apbBlock.senList)
     train()
     wordmapOp.clearActivation(wordmap)
     updateWeights(allpnode)

@@ -17,9 +17,9 @@ class parentNode:
         self.sonNode.append({"node":wnode,"activation":activation}) #没有再添加
 
     def activeSon(self):
-        for son in self.sonNode:
-            name='allpnode['+str(self.sub)+'].son[\"activation\"]'
-            wordmapOp.nodeConduct(son["node"],son["activation"],name)
+        for son in range(len(self.sonNode)):
+            name='allpnode['+str(self.sub)+'].sonNode['+str(son)+'][\"activation\"]'
+            wordmapOp.nodeConduct(self.sonNode[son]["node"],self.sonNode[son]["activation"],name)
 
     def __init__(self,word):
         self.word=word
@@ -40,6 +40,7 @@ def findornew(allpnode,word):
 # 注意，pnBlock的集合，即network可完全通过allpnode中的元素自定义而不用经由训练文本自动生成
 class pnBlock:
     sen = ""  # 标记的所描述的那个原始句子
+    senList = None
     block = None #[parentNode]
     behindNode = None  # [{pnBlock,P,isPass}]，后向接边
     frontNode = None  # 前向接边
@@ -102,7 +103,8 @@ class pnBlock:
             wordmapOp.clearActivation(wordmap)
         return wordmapOp.getmaxsen(senpair)
 
-    def __init__(self,block,sen):
+    def __init__(self,block,sen,senList):
+        self.senList=senList
         self.block=block
         self.sen=sen
         self.behindNode = []
