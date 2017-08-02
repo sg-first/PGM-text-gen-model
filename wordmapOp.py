@@ -63,21 +63,21 @@ def nodeConduct(wnode,activateSignal,formDelta):
         return
     # 条件符合，进行传导
     wnode.activation+=activateSignal #乘边权的过程放在递归前，如下
-    wnode.caluForm+='+'+formDelta
+    if not wnode.caluForm=='':
+        wnode.caluForm+='+'
+    wnode.caluForm+=formDelta
     for nunion in wnode.behindNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            updateDelta = lang.equBayes(wnode.wordCount, nunion["count"])
-            newformDelta = wnode.caluForm + '*' + str(updateDelta)
-            nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
+            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
+            nodeConduct(nunion["node"], activateSignal * nunion["P"], newformDelta)
     for nunion in wnode.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            updateDelta = lang.equBayes(wnode.wordCount, nunion["count"])
-            newformDelta = wnode.caluForm + '*' + str(updateDelta)
-            nodeConduct(nunion["node"], activateSignal * updateDelta, newformDelta)
+            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
+            nodeConduct(nunion["node"], activateSignal * nunion["P"], newformDelta)
     for pair in wnode.synonymNode:
         if not pair["isPass"]:
             pair["isPass"]=True

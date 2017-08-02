@@ -61,7 +61,7 @@ class node:
 
     def addSynonyms(self,n):
         for spair in self.synonymNode:
-            if spair["node"].word==self.word: #正面有，反面就有，反之亦然
+            if spair["node"].word==n.word: #正面有，反面就有，反之亦然
                 return
         self.synonymNode.append({"node": n, "isPass": False})
         n.synonymNode.append({"node": self, "isPass": False})

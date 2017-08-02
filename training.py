@@ -42,12 +42,12 @@ def proceCondition(condition,model,num): #condition为文本形式
     allvar = help.repeatSplitStr(allvar, '>=')
     allvar = help.repeatSplitStr(allvar, '<=')
     for i in range(len(allvar)):
-        if i != len(allvar) - 1 and not allvar[i].isdigit():
+        if i != len(allvar) - 1 and not help.isNum(allvar[i]):
             newname=addVar(allvar[i]) #定义约束条件中的目标变量
             condition=condition.replace(allvar[i],newname) #给约束条件中的变量进行换名
 
     slackVal='slackVariable['+str(num)+']' #加入扩大可行域的松弛变量
-    if condition.find('>')==-1: #左侧目标变量系数都为正，右侧松弛变量大减小加
+    if condition.find('>=')!=-1: #左侧目标变量系数都为正，右侧松弛变量大减小加
         condition = 'model+=' + condition + '-' + slackVal
     else:
         condition = 'model+=' + condition + '+' + slackVal

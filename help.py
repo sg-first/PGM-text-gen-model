@@ -70,3 +70,10 @@ def isExist(list,elm):
 
 def limitDigits(num):
     return float(("%.2f" % num))
+
+def isNum(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
