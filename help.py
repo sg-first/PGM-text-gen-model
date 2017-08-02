@@ -25,9 +25,6 @@ def gethead(str):
 def gethead2(str):
     return str[1:2]
 
-def listDel(li, index): #这里注意使用方式
-    return li[:index] + li[index+1:]
-
 def splitList(list,sep,result=None):
     if result is None:
         result=[]

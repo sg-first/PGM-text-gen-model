@@ -56,7 +56,10 @@ def mergeCoefficient(monomialList2,sub):
             monomialList2[sub]['coefficient']+=monomialList2[s]['coefficient']
         # 合并后删掉被合并节点
         for s in same:
-            monomialList2=help.listDel(monomialList2,s)
+            del monomialList2[s]
+            for s2 in range(len(same)): #移动下标
+                if same[s2]>s:
+                    same[s2]-=1
         return mergeCoefficient(monomialList2, 0) # 下标状况变化后，从0重新开始
 
 def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
@@ -106,7 +109,6 @@ def proceCondition(condition,model,num): #condition为文本形式
         condition = 'model+=' + condition + '-' + slackVal
     else:
         condition = 'model+=' + condition + '+' + slackVal
-    print(condition)
     exec(condition) #加入该约束条件
 
 def train(): #pulic

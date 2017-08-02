@@ -107,7 +107,6 @@ def nextword(n,sen,p,senpair):
                 sen.append(stopword)
             sen.append(n)
             nextword(nunion["node"],sen,newp,senpair)
-            # 这里无限扩展应该并没有问题，因为训练可以使得初激活值调整到生成正常长度的合理句子
 
     if isEnd: #一个都找不到，即结束
         # 产生句尾停用词

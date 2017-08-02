@@ -15,7 +15,7 @@ senllist=[]
 for tsenlist in tsenllist:
     senlistsou = lang.segWord(tsenlist)
     senlist = help.splitList(senlistsou,"。")
-    senlist = help.listDel(senlist, len(senlist) - 1) #去除尾部空列
+    del senlist[len(senlist) - 1] #去除尾部空列
     senllist.append(senlist)
 print("切割训练文本完成！")
 
@@ -47,8 +47,8 @@ for wn in wordmap[3]:
 senpair=wordmapOp.getsenpair(wordmap)
 #sen=wordmapOp.getmaxsen(senpair)
 #print(help.listToStr(sen))
-#wordmapOp.clearActivation(wordmap)
 print(help.tojson(senpair))
+wordmapOp.clearActivation(wordmap)
 
 print("高层生成开始！")
 # 生成部分：先选定摘要块，自动向下生成，假设选择network[3]

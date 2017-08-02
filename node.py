@@ -110,6 +110,6 @@ def wordFindNodeList(wordmap,wordList): #批量转换
         for c in range(len(wordList)): #每个词都遍历一遍
             if n.word==wordList[c]:
                 result.append(n)
-                wordList=help.listDel(wordList,c)
+                del wordList[c]
                 break
     return result
