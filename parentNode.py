@@ -94,11 +94,12 @@ class pnBlock:
     def changeFrontNode(self,apnblock,delta):
         self.changeNode(apnblock,delta,self.frontNode)
 
-    def activeBlock(self,wordmap):
+    def activeBlock(self,wordmap,isClear=True):
         for pnode in self.block:
             pnode.activeSon()
         senpair = wordmapOp.getsenpair(wordmap)
-        wordmapOp.clearActivation(wordmap)
+        if isClear:
+            wordmapOp.clearActivation(wordmap)
         return wordmapOp.getmaxsen(senpair)
 
     def __init__(self,block,sen):

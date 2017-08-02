@@ -1,6 +1,7 @@
 import parameter
 import help
 import pulp
+import wordmapOp
 
 constraints=[]
 targetVariable=[]
@@ -125,7 +126,8 @@ def updateWeights(allpnode):
     slackVariable.clear()
 
 def relTrain(apbBlock,wordmap,allpnode):
-    apbBlock.activeBlock(wordmap) #只激活，不用管生成的是什么
+    apbBlock.activeBlock(wordmap,False) #只激活，不用管生成的是什么，而且不能清记录，训练后手动重置
     selectTarget(wordmap,apbBlock.sen)
     train()
+    wordmapOp.clearActivation(wordmap)
     updateWeights(allpnode)
