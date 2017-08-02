@@ -65,9 +65,9 @@ def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
             wn.caluForm=simplify(wn.caluForm)
             constraints.append(wn.caluForm+'<='+str(parameter.minactive))
             continue
-        if wn.activation<parameter.minactive and help.isExist(relSen,wn.word):
+        if help.isExist(relSen,wn.word): #and wn.activation<parameter.minactive: #只要需要出现的都加入约束条件，防止权值过小
             wn.caluForm = simplify(wn.caluForm)
-            constraints.append(wn.caluForm+'>='+str(parameter.minactive))
+            constraints.append(wn.caluForm+'>='+str(parameter.LPminactive))
             continue
 
 def creatModel():
@@ -75,7 +75,7 @@ def creatModel():
 
 def addVar(name):
     varname='targetVariable['+str(len(targetVariable))+']'
-    var=pulp.LpVariable(varname,lowBound=0)
+    var=pulp.LpVariable(varname,lowBound=parameter.activeThreshold)
     weightIndex[name]=var
     targetVariable.append(var)
     return varname
