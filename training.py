@@ -7,12 +7,65 @@ targetVariable=[]
 weightIndex={} # 映射原文件名到目标变量
 slackVariable=[]
 
+def simplify(condition): # 防止规划过程中递归过深，化简约束条件
+    monomialList = condition.split('+')
+    monomialList2=[]
+    for m in monomialList:
+        tokenList=m.split('*')
+        # 合并系数
+        coefficient=1
+        variableList=[]
+        for t in tokenList:
+            if help.isNum(t):
+                coefficient*=float(t)
+            else:
+                variableList.append(t)
+        # 重整为字符
+        newtv=''
+        for v in range(len(variableList)):
+            newtv+=variableList[v]
+            if v!=len(variableList)-1:
+                newtv+='*'
+        monomialList2.append({'coefficient':coefficient,'variable':newtv})
+
+    monomialList.clear()
+    monomialList2=mergeCoefficient(monomialList2,0)
+    newCondition=''
+    for m in range(len(monomialList2)):
+        newCondition+=str(monomialList2[m]['coefficient'])+'*'+monomialList2[m]['variable']
+        if m!=len(monomialList2)-1:
+            newCondition+='+'
+    return newCondition
+
+def mergeCoefficient(monomialList2,sub):
+    if sub==len(monomialList2)-1:
+        return monomialList2
+    # 先找变量相同的
+    same=[]
+    for m2 in range(len(monomialList2)):
+        if m2==sub:
+            continue
+        if monomialList2[m2]['variable']==monomialList2[sub]['variable']:
+            same.append(m2)
+    if len(same)==0: # 没有相同的往后找
+        return mergeCoefficient(monomialList2, sub + 1)
+    else:
+        # 有的话就合并系数
+        for s in same:
+            monomialList2[sub]['coefficient']+=monomialList2[s]['coefficient']
+        # 合并后删掉被合并节点
+        for s in same:
+            monomialList2=help.listDel(monomialList2,s)
+        return mergeCoefficient(monomialList2, 0) # 下标状况变化后，从0重新开始
+
 def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
     for wn in wordmap:
         if wn.activation>parameter.minactive and not help.isExist(relSen,wn.word):
+            wn.caluForm=simplify(wn.caluForm)
             constraints.append(wn.caluForm+'<='+str(parameter.minactive))
             continue
         if wn.activation<parameter.minactive and help.isExist(relSen,wn.word):
+            wn.caluForm = simplify(wn.caluForm)
             constraints.append(wn.caluForm+'>='+str(parameter.minactive))
             continue
 
@@ -51,7 +104,7 @@ def proceCondition(condition,model,num): #condition为文本形式
         condition = 'model+=' + condition + '-' + slackVal
     else:
         condition = 'model+=' + condition + '+' + slackVal
-
+    print(condition)
     exec(condition) #加入该约束条件
 
 def train(): #pulic

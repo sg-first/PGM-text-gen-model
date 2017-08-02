@@ -115,7 +115,7 @@ def nextword(n,sen,p,senpair):
         stopword=node.genStopWord(n.behindStop)
         if not stopword is None:
             sen.append(stopword)
-            senpair.append({"sen":sen,"P":p})
+        senpair.append({"sen":sen,"P":p})
 
 def getmaxsen(senpair):
     return help.getmax(senpair,"sen")
@@ -123,6 +123,7 @@ def getmaxsen(senpair):
 def clearActivation(wordmap):
     for n in wordmap:
         n.activation=0
+        n.caluForm=''
         for nunion in n.behindNode:
             nunion["isPass"]=False
         for nunion in n.frontNode:

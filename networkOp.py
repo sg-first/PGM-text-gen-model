@@ -118,7 +118,6 @@ def nextblock(b,blist,p,blpair):
             nextblock(nunion["node"], blist, newp, blpair)
 
     if isEnd: #一个都找不到，即结束
-        p*=len(blist) #对概率进行取均值平滑
         blpair.append({"blist":blist, "P":p})
 
 def getmaxblist(blpair):
