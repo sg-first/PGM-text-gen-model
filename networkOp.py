@@ -7,7 +7,7 @@ import copy
 import random
 
 def genBlock(wordmap,sen,allpnode):
-    wnodeList=node.wordFindNodeList(wordmap,sen)
+    wnodeList=node.wordFindNodeList(wordmap,sen[:])
     strsen=help.listToStr(sen)
     sum=lang.summary(strsen)
     if len(sum)==0: # 采样不到词
@@ -52,7 +52,6 @@ def caluSimCount(sen,network): # 将相似度计数挪到接边合并中，该�
     return count
 
 def normalizedWeight(network,senllist):
-    chapterCount=len(senllist)
     for b in network:
         # 遍历network，将所有相似块的接边合并。同时进行相似计数
         if parameter.simMergers:
@@ -74,7 +73,7 @@ def normalizedWeight(network,senllist):
                     b.relgenNodeStr()
                     b2.relgenNodeStr()
         # 正式的归一化过程
-        b.firstp/=chapterCount  # 句首次数归一化
+        b.firstp/=b.simCount  # 句首次数归一化
         # 边权归一化
         for sunion in b.behindNode:
             sunion["count"]=sunion["P"]
@@ -112,13 +111,14 @@ def nextblock(b,blist,p,blpair):
 
     for nunion in b.behindNode:
         newp=p*lang.equBayes(b.simCount,nunion["count"])
-        if b.activation > parameter.minactiveB and newp>parameter.minpB:
+        if b.activation > parameter.minactiveB: # and newp>parameter.minpB:
             isEnd = False  # 能找到一个就不结束
             blist.append(b)
             nextblock(nunion["node"], blist, newp, blpair)
 
     if isEnd: #一个都找不到，即结束
-        blpair.append({"blist":blist, "P":p})
+        if p >= parameter.minpB:
+            blpair.append({"blist":blist, "P":p})
 
 def getmaxblist(blpair):
     return help.getmax(blpair,"blist")

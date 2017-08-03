@@ -41,9 +41,10 @@ for b in network:
 print("allpnode向下激活权值训练完成！")
 
 print("底层生成开始！")
-# 底层的生成部分测试：直接激活一些词生成句子，假设选择wnlist
-for wn in wordmap[3]:
-    wordmapOp.nodeConduct(wn,50,'nothing') # 随便激活一个，先50
+# 底层的生成部分测试：直接激活一些词生成句子，假设选择wordmap[3]和wordmap[5]
+wordmapOp.nodeConduct(wordmap[3],20,'')
+wordmapOp.nodeConduct(wordmap[5],20,'')
+print("开始产生句子啦！关注无限扩展！")
 senpair=wordmapOp.getsenpair(wordmap)
 #sen=wordmapOp.getmaxsen(senpair)
 #print(help.listToStr(sen))
@@ -52,9 +53,10 @@ wordmapOp.clearActivation(wordmap)
 
 print("高层生成开始！")
 # 生成部分：先选定摘要块，自动向下生成，假设选择network[3]
-for b in network[3]:
-    networkOp.blockConduct(b,50) # 随便激活一个，先50
+networkOp.blockConduct(network[3],30)
+print("开始产生啦！关注无限扩展！")
 blpair=networkOp.getblpair(network)
 blist=networkOp.getmaxblist(blpair)
+print("开始产生句子啦！关注无限扩展！")
 print(networkOp.genChapter(blist,wordmap))
 networkOp.clearActivation(network)

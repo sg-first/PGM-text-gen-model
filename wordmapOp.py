@@ -31,10 +31,6 @@ def caluwordCount(n,senllist):
     return wordCount
 
 def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
-    senCount=0
-    for senlist in senllist:
-        senCount += len(senlist)
-
     for n in wordmap:
         # 遍历wordmap，给所有node添加同义边
         for n2 in wordmap:
@@ -43,8 +39,8 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
             if lang.isSynonyms(n.word,n2.word):
                 n.addSynonyms(n2)
         # 正式的归一化过程
-        n.firstp /= senCount  # 句首次数归一化（使用等价贝叶斯后这也是真归一化）
         n.wordCount=caluwordCount(n,senllist) # 首先计算该词在整个训练文本中出现的次数（由于停用词不会在wordmap中出现，所以数量上也不会把停用词算在内）
+        n.firstp /= n.wordCount # 句首次数归一化（使用等价贝叶斯后这也是真归一化）
         # 边权归一化
         for nunion in n.behindNode:
             nunion["count"]=nunion["P"]
@@ -99,7 +95,7 @@ def nextword(n,sen,p,senpair):
 
     for nunion in n.behindNode:
         newp=p*lang.equBayes(n.wordCount, nunion["count"])
-        if n.activation>parameter.minactive and newp>parameter.minp:
+        if n.activation>parameter.minactive: # and newp>parameter.minp:
             isEnd=False #能找到一个就不结束
             #产生过渡停用词
             stopword=node.genStopWord(nunion["stopList"])
@@ -109,11 +105,12 @@ def nextword(n,sen,p,senpair):
             nextword(nunion["node"],sen,newp,senpair)
 
     if isEnd: #一个都找不到，即结束
-        # 产生句尾停用词
-        stopword=node.genStopWord(n.behindStop)
-        if not stopword is None:
-            sen.append(stopword)
-        senpair.append({"sen":sen,"P":p})
+        if p>=parameter.minp:
+            # 产生句尾停用词
+            stopword=node.genStopWord(n.behindStop)
+            if not stopword is None:
+                sen.append(stopword)
+            senpair.append({"sen":sen,"P":p})
 
 def getmaxsen(senpair):
     return help.getmax(senpair,"sen")

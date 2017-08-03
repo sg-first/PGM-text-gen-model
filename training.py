@@ -45,10 +45,13 @@ def mergeCoefficient(monomialList2):
     monomialList=[]
     monomialList.append({'coefficient':0,'variable':monomialList2[0]['variable']})
     for m2 in monomialList2:
+        isfound = False
         for m in monomialList:
             if m2['variable']==m['variable']:
                 m['coefficient']+=m2['coefficient'] # 有一样的就合并系数
+                isfound=True
                 break
+        if not isfound:
             monomialList.append(m2) # 没有一样的就添加新项
     return monomialList
 
