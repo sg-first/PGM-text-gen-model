@@ -20,9 +20,9 @@ def genBlock(wordmap,sen,allpnode):
         # 产生全连接子节点
         for wnode in wnodeList:
             if parameter.radomWeight:
-                nw1.addsonNode(wnode,random.randint(1,100))
+                nw1.addsonNode(wnode,random.randint(1,50))
             else:
-                nw1.addsonNode(wnode,30)
+                nw1.addsonNode(wnode,15)
 
     return parentNode.pnBlock(block,strsen,sen)
 

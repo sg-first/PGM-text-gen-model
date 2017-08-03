@@ -10,6 +10,17 @@ slackVariable=[]
 
 def simplify(condition): # 防止规划过程中递归过深，化简约束条件
     monomialList = condition.split('+')
+    monomialList = mergeCoefficientA(monomialList)
+    print(len(monomialList))
+    monomialList = mergeCoefficient(monomialList)
+    newCondition=''
+    for m in range(len(monomialList)):
+        newCondition+=str(monomialList[m]['coefficient'])+'*'+monomialList[m]['variable']
+        if m!=len(monomialList)-1:
+            newCondition+='+'
+    return newCondition
+
+def mergeCoefficientA(monomialList):
     monomialList2=[]
     for m in monomialList:
         tokenList=m.split('*')
@@ -28,39 +39,18 @@ def simplify(condition): # 防止规划过程中递归过深，化简约束条�
             if v!=len(variableList)-1:
                 newtv+='*'
         monomialList2.append({'coefficient':coefficient,'variable':newtv})
+    return monomialList2
 
-    monomialList.clear()
-    monomialList2=mergeCoefficient(monomialList2,0)
-    newCondition=''
-    for m in range(len(monomialList2)):
-        newCondition+=str(monomialList2[m]['coefficient'])+'*'+monomialList2[m]['variable']
-        if m!=len(monomialList2)-1:
-            newCondition+='+'
-    return newCondition
-
-def mergeCoefficient(monomialList2,sub):
-    if sub==len(monomialList2)-1:
-        return monomialList2
-    # 先找变量相同的
-    same=[]
-    for m2 in range(len(monomialList2)):
-        if m2==sub:
-            continue
-        if monomialList2[m2]['variable']==monomialList2[sub]['variable']:
-            same.append(m2)
-    if len(same)==0: # 没有相同的往后找
-        return mergeCoefficient(monomialList2, sub + 1)
-    else:
-        # 有的话就合并系数
-        for s in same:
-            monomialList2[sub]['coefficient']+=monomialList2[s]['coefficient']
-        # 合并后删掉被合并节点
-        for s in range(len(same)):
-            del monomialList2[same[s]]
-            for s2 in range(s,len(same)): #移动下标
-                if same[s2]>same[s]:
-                    same[s2]-=1
-        return mergeCoefficient(monomialList2, 0) # 下标状况变化后，从0重新开始
+def mergeCoefficient(monomialList2):
+    monomialList=[]
+    monomialList.append({'coefficient':0,'variable':monomialList2[0]['variable']})
+    for m2 in monomialList2:
+        for m in monomialList:
+            if m2['variable']==m['variable']:
+                m['coefficient']+=m2['coefficient'] # 有一样的就合并系数
+                break
+            monomialList.append(m2) # 没有一样的就添加新项
+    return monomialList
 
 def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
     for wn in wordmap:
