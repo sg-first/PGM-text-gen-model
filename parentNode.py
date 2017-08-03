@@ -69,7 +69,7 @@ class pnBlock:
     def dirChangeNode(self,sen,apnBlock,delta,nodelist):
         # 首先通过sen从已有的接边里找，找到就直接改P
         for nunion in nodelist:
-            if nunion["node"].sen == sen:
+            if nunion["pnBlock"].sen == sen:
                 nunion["P"] += delta
                 return nunion
         # 找不到直接添加apnBlcok

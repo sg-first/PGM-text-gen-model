@@ -87,22 +87,28 @@ def getsenpair(wordmap):
             stopword=node.genStopWord(n.frontStop)
             if not stopword is None:
                 sen.append(stopword)
-            nextword(n,sen,n.firstp,senpair)
+            nextword(n,sen,n.firstp,senpair) # 传过去的n是已经确定要添加的
     return senpair
 
 def nextword(n,sen,p,senpair):
-    isEnd=True #是否到达本次递归结束时（找不到下一个词）
+    sen.append(n.word)
+    isEnd=True # 是否到达本次递归结束时（找不到下一个词）
 
     for nunion in n.behindNode:
         newp=p*lang.equBayes(n.wordCount, nunion["count"])
-        if n.activation>parameter.minactive: # and newp>parameter.minp:
+        if n.activation>parameter.minactive:
+            if len(sen)>40:
+                break
+            if lang.isRepeat(sen):
+                break
+            #if len(sen)>5 and p<parameter.minp:
+            #    break
             isEnd=False #能找到一个就不结束
-            #产生过渡停用词
+            # 产生过渡停用词
             stopword=node.genStopWord(nunion["stopList"])
             if not stopword is None:
                 sen.append(stopword)
-            sen.append(n)
-            nextword(nunion["node"],sen,newp,senpair)
+            nextword(nunion["node"],sen[:],newp,senpair)
 
     if isEnd: #一个都找不到，即结束
         if p>=parameter.minp:

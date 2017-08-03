@@ -68,3 +68,11 @@ def isSim(sen1,sen2,minlen=5,topK=5):
 def equBayes(char,word):
     result=word*2/char
     return help.limitDigits(result)
+
+def isRepeat(sen):
+    for w in sen:
+        if isStopWord(w):
+            continue
+        if help.caluCount(sen,w)>2:
+            return True
+    return False

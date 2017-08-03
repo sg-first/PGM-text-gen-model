@@ -11,7 +11,6 @@ slackVariable=[]
 def simplify(condition): # 防止规划过程中递归过深，化简约束条件
     monomialList = condition.split('+')
     monomialList = mergeCoefficientA(monomialList)
-    print(len(monomialList))
     monomialList = mergeCoefficient(monomialList)
     newCondition=''
     for m in range(len(monomialList)):

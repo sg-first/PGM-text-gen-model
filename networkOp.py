@@ -92,29 +92,29 @@ def blockConduct(b,activateSignal):
             nunion["isPass"] = True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            blockConduct(nunion["node"], activateSignal * nunion["P"])
+            blockConduct(nunion["pnBlock"], activateSignal * nunion["P"])
     for nunion in b.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"] = True
-            blockConduct(nunion["node"], activateSignal * nunion["P"])
+            blockConduct(nunion["pnBlock"], activateSignal * nunion["P"])
 
 def getblpair(network): # 生成概率大的块序列
     blpair=[] # [{blockList,P}]
     for b in network:
         if b.activation > parameter.minactiveB and b.firstp > 0:  # 从每个备选块出发试图产生块序列
             blist=[] # 从b出发试图产生的块序列
-            nextblock(b, blist, b.firstp, blpair)
+            nextblock(b, blist, b.firstp, blpair) # 传过去的n是已经确定要添加的
     return blpair
 
 def nextblock(b,blist,p,blpair):
+    blist.append(b)
     isEnd = True  # 是否到达本次递归结束时（找不到下一个块）
 
     for nunion in b.behindNode:
         newp=p*lang.equBayes(b.simCount,nunion["count"])
         if b.activation > parameter.minactiveB: # and newp>parameter.minpB:
             isEnd = False  # 能找到一个就不结束
-            blist.append(b)
-            nextblock(nunion["node"], blist, newp, blpair)
+            nextblock(nunion["pnBlock"], blist, newp, blpair)
 
     if isEnd: #一个都找不到，即结束
         if p >= parameter.minpB:

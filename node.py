@@ -52,11 +52,11 @@ class node:
             return
         else:
             if node2 is None:  # 上层要至少保证word1不是None
-                self.addStopWord(self.frontStop, word1, delta)  # word1为尾词停止，调整frontStop
+                # self.addStopWord(self.frontStop, word1, delta)  # word1为尾词停止，调整frontStop
                 return
             else:
                 elm = self.changeNode(node2,delta,self.frontNode)
-                self.addStopWord(elm["stopList"], word1, delta)
+                # self.addStopWord(elm["stopList"], word1, delta)
                 return
 
     def addSynonyms(self,n):
