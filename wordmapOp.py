@@ -2,6 +2,7 @@ import help
 import parameter
 import node
 import lang
+import copy
 
 def genWordMap(wordmap,sen):
     wnlist=[]
@@ -25,11 +26,11 @@ def genWordMap(wordmap,sen):
         if n1 == 0: # 第一位，不连接前向接边
             wnlist[n1].firstp += 1
         else:
-            wnlist[n1].autoChangeFrontNode(wnlist[n1 - 1], help.getindex(wnlist, n1 - 2), newsen[n1 - 1], 1)
+            wnlist[n1].autoChangeFrontNode(wnlist[n1 - 1], help.getByIndex(wnlist, n1 - 2), newsen[n1 - 1], 1)
         if n1 == 1 and (wnlist[0] is None): # 补充句首为停用词firstp调整的情况
             wnlist[n1].firstp += 1
         if n1!=len(newsen)-1: # 不是最后一位，连接后向接边
-            wnlist[n1].autoChangeBehindNode(wnlist[n1 + 1], help.getindex(wnlist, n1 + 2), newsen[n1 + 1], 1)
+            wnlist[n1].autoChangeBehindNode(wnlist[n1 + 1], help.getByIndex(wnlist, n1 + 2), newsen[n1 + 1], 1)
 
 def caluwordCount(n,senllist):
     wordCount = 0
@@ -66,21 +67,25 @@ def nodeConduct(wnode,activateSignal,formDelta):
         return
     # 条件符合，进行传导
     wnode.activation+=activateSignal #乘边权的过程放在递归前，如下
-    if not wnode.caluForm=='':
-        wnode.caluForm+='+'
-    wnode.caluForm+=formDelta
+    if len(wnode.caluForm)!=0 and len(formDelta)==1 and node.getLastForm(wnode.caluForm)['variable']==formDelta[0]['variable']:
+        node.getLastForm(wnode.caluForm)['coefficient']+=formDelta[0]['coefficient']
+    else:
+        wnode.caluForm += formDelta
+
     for nunion in wnode.behindNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
             # 这里是一种优化，严格来说应该是在从后向边激活后，禁止被激活词从前向边重复激活该词。但这样需要在此反复遍历寻找该词在behindNode中的位置。因此这里禁传自己，然后被激活词前向回传
             # 一次，也同样禁传自己，二者就不会重复传递
-            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
-            nodeConduct(nunion["node"], activateSignal * nunion["P"], newformDelta)
+            newcaluForm=copy.deepcopy(wnode.caluForm)
+            node.getLastForm(newcaluForm)['coefficient'] *= nunion["P"]
+            nodeConduct(nunion["node"], activateSignal * nunion["P"], newcaluForm)
     for nunion in wnode.frontNode:
         if not nunion["isPass"]:
             nunion["isPass"]=True
-            newformDelta = wnode.caluForm + '*' + str(nunion["P"])
-            nodeConduct(nunion["node"], activateSignal * nunion["P"], newformDelta)
+            newcaluForm=wnode.caluForm[:]
+            node.getLastForm(newcaluForm)['coefficient'] *= nunion["P"]
+            nodeConduct(nunion["node"], activateSignal * nunion["P"], newcaluForm)
     for pair in wnode.synonymNode:
         if not pair["isPass"]:
             pair["isPass"]=True
@@ -142,7 +147,7 @@ def clearActivation(wordmap):
     averageActivation=0
     for n in wordmap:
         n.activation=0
-        n.caluForm=''
+        n.caluForm.clear()
         for nunion in n.behindNode:
             nunion["isPass"]=False
         for nunion in n.frontNode:

@@ -9,9 +9,9 @@ class node:
     frontNode = None  # 前向接边
     synonymNode = None # [{node,isPass}]，同义边
     activation = 0
-    firstp = 0  # 该词出现在句首的次数
-    caluForm = ''
-    wordCount = 0 #在训练集中出现次数
+    firstp = 0  # 该词出现在句首的概率
+    caluForm = None # [{c:v}]
+    wordCount = 0 # 在训练集中出现次数
 
     def changeNode(self, anode, delta, nodelist):  # Private
         for nunion in nodelist:
@@ -72,6 +72,7 @@ class node:
         self.behindNode = []
         self.frontNode = []
         self.synonymNode = []
+        self.caluForm = []
 
 class stopWord:
     word = ""
@@ -112,3 +113,6 @@ def wordFindNodeList(wordmap,wordList): #批量转换
                 del wordList[c]
                 break
     return result
+
+def getLastForm(list):
+    return list[len(list) - 1]

@@ -9,36 +9,13 @@ weightIndex={} # 映射原文件名到目标变量
 slackVariable=[]
 
 def simplify(condition): # 防止规划过程中递归过深，化简约束条件
-    monomialList = condition.split('+')
-    monomialList = mergeCoefficientA(monomialList)
-    monomialList = mergeCoefficient(monomialList)
+    condition = mergeCoefficient(condition)
     newCondition=''
-    for m in range(len(monomialList)):
-        newCondition+=str(monomialList[m]['coefficient'])+'*'+monomialList[m]['variable']
-        if m!=len(monomialList)-1:
+    for m in range(len(condition)):
+        newCondition+=str(condition[m]['coefficient'])+'*'+condition[m]['variable']
+        if m!=len(condition)-1:
             newCondition+='+'
     return newCondition
-
-def mergeCoefficientA(monomialList):
-    monomialList2=[]
-    for m in monomialList:
-        tokenList=m.split('*')
-        # 合并系数
-        coefficient=1
-        variableList=[]
-        for t in tokenList:
-            if help.isNum(t):
-                coefficient*=float(t)
-            else:
-                variableList.append(t)
-        # 重整为字符
-        newtv=''
-        for v in range(len(variableList)):
-            newtv+=variableList[v]
-            if v!=len(variableList)-1:
-                newtv+='*'
-        monomialList2.append({'coefficient':coefficient,'variable':newtv})
-    return monomialList2
 
 def mergeCoefficient(monomialList2):
     monomialList=[]
@@ -57,12 +34,12 @@ def mergeCoefficient(monomialList2):
 def selectTarget(wordmap,relSen): #传导后进行此步骤。pulic
     for wn in wordmap:
         if wn.activation>parameter.minactive and not help.isExist(relSen,wn.word):
-            wn.caluForm=simplify(wn.caluForm)
-            constraints.append(wn.caluForm+'<='+str(parameter.minactive))
+            condition=simplify(wn.caluForm)
+            constraints.append(condition+'<='+str(parameter.minactive))
             continue
         if help.isExist(relSen,wn.word): #and wn.activation<parameter.minactive: #只要需要出现的都加入约束条件，防止权值过小
-            wn.caluForm = simplify(wn.caluForm)
-            constraints.append(wn.caluForm+'>='+str(parameter.LPminactive))
+            condition = simplify(wn.caluForm)
+            constraints.append(condition+'>='+str(parameter.LPminactive))
             continue
 
 def creatModel():

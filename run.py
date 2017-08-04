@@ -42,8 +42,8 @@ print("allpnode向下激活权值训练完成！")
 
 print("底层生成开始！")
 # 底层的生成部分测试：直接激活一些词生成句子，假设选择wordmap[3]和wordmap[5]
-wordmapOp.nodeConduct(wordmap[3],20,'')
-wordmapOp.nodeConduct(wordmap[5],20,'')
+wordmapOp.nodeConduct(wordmap[3],15,'')
+wordmapOp.nodeConduct(wordmap[5],15,'')
 print("开始产生句子啦！关注无限扩展！")
 senpair=wordmapOp.getsenpair(wordmap)
 #sen=wordmapOp.getmaxsen(senpair)

@@ -19,7 +19,8 @@ class parentNode:
     def activeSon(self):
         for son in range(len(self.sonNode)):
             name='allpnode['+str(self.sub)+'].sonNode['+str(son)+'][\"activation\"]'
-            wordmapOp.nodeConduct(self.sonNode[son]["node"],self.sonNode[son]["activation"],name)
+            formpair={'coefficient':1,'variable':name}
+            wordmapOp.nodeConduct(self.sonNode[son]["node"],self.sonNode[son]["activation"],[formpair])
 
     def __init__(self,word):
         self.word=word
