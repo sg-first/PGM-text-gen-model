@@ -119,7 +119,7 @@ def nextword(n,sen,p,senpair):
     sen.append(n.word)
     isEnd=True # 是否到达本次递归结束时（找不到下一个词）
 
-    if (not len(sen)>30) and (not lang.isRepeat(sen)) and (not (len(sen)>5 and p<parameter.minp)):
+    if (not len(sen)>40) and (not lang.isRepeat(sen)) and (not (len(sen)>5 and p<parameter.minp)):
         for nunion in n.behindNode:
             if nunion["node"].activation>parameter.minactive:
                 isEnd=False #能找到一个就不结束

@@ -73,6 +73,6 @@ def isRepeat(sen):
     for w in sen:
         if isStopWord(w):
             continue
-        if help.caluCount(sen,w)>2:
+        if help.caluCount(sen,w)>parameter.repeatLimit:
             return True
     return False

@@ -22,7 +22,7 @@ def genBlock(wordmap,sen,allpnode):
             if parameter.radomWeight:
                 nw1.addsonNode(wnode,random.randint(1,50))
             else:
-                nw1.addsonNode(wnode,15)
+                nw1.addsonNode(wnode,6)
 
     return parentNode.pnBlock(block,strsen,sen)
 
