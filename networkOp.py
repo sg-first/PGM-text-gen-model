@@ -111,9 +111,9 @@ def nextblock(b,blist,p,blpair):
     isEnd = True  # 是否到达本次递归结束时（找不到下一个块）
 
     for nunion in b.behindNode:
-        newp=p*lang.equBayes(b.simCount,nunion["count"])
         if b.activation > parameter.minactiveB: # and newp>parameter.minpB:
             isEnd = False  # 能找到一个就不结束
+            newp = p * lang.equBayes(b.simCount, nunion["count"])
             nextblock(nunion["pnBlock"], blist, newp, blpair)
 
     if isEnd: #一个都找不到，即结束

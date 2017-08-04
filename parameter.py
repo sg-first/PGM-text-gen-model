@@ -1,7 +1,7 @@
 activeThreshold=0.5  # 词节点的可激活阈值
 minactive=5  # 备选词最低激活值
 LPminactive=10 # 在规划求解中使用的带余地的激活阈值
-minp=0.9  # 备选句子最低生成概率
+minp=10000  # 备选句子最低生成概率
 minstop=0.2  # 舍弃停用词的概率
 stackWeights=0.9 # 叠加接边衰减
 

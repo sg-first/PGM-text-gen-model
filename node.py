@@ -1,6 +1,5 @@
 import lang
 import parameter
-import help
 
 class node:
     word = ""
@@ -34,7 +33,7 @@ class node:
         elmlist.append(newStopWord)
 
     def autoChangeBehindNode(self,node1,node2,word1,delta):
-        if not lang.isStopWord(word1):
+        if not node1 is None:
             self.changeNode(node1, delta, self.behindNode)
             return
         else:
@@ -47,16 +46,16 @@ class node:
                 return
 
     def autoChangeFrontNode(self,node1,node2,word1,delta):
-        if not lang.isStopWord(word1):
+        if not node1 is None:
             self.changeNode(node1, delta, self.frontNode)
             return
         else:
-            if node2 is None:  # 上层要至少保证word1不是None
-                # self.addStopWord(self.frontStop, word1, delta)  # word1为尾词停止，调整frontStop
+            if node2 is None:  # 上层要至少保证word1不是None（指越界）
+                self.addStopWord(self.frontStop, word1, delta)  # word1为首词停止，调整frontStop
                 return
             else:
                 elm = self.changeNode(node2,delta,self.frontNode)
-                # self.addStopWord(elm["stopList"], word1, delta)
+                self.addStopWord(elm["stopList"], word1, delta)
                 return
 
     def addSynonyms(self,n):

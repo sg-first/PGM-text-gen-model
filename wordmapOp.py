@@ -5,12 +5,18 @@ import lang
 
 def genWordMap(wordmap,sen):
     wnlist=[]
+    newsen=[]
     # 先把word都转换成node
     for word in sen:
         if lang.isStopWord(word):
-            wnlist.append(None) # 停用词
+            if len(wnlist) == 0 or not wnlist[len(wnlist)-1] is None:
+                wnlist.append(None) # 停用词
+                newsen.append(word)
+            else:
+                newsen[len(wnlist)-1]+=word
         else:
             wnlist.append(node.findornew(wordmap,word))
+            newsen.append(word)
     # 然后进行接边的连接
     for n1 in range(len(wnlist)):
         if wnlist[n1] is None: # 本身就是停用词，跳过
@@ -19,9 +25,11 @@ def genWordMap(wordmap,sen):
         if n1 == 0: # 第一位，不连接前向接边
             wnlist[n1].firstp += 1
         else:
-            wnlist[n1].autoChangeFrontNode(wnlist[n1 - 1], help.getindex(wnlist, n1 - 2), sen[n1 - 1], 1)
-        if n1!=len(sen)-1: # 不是最后一位，连接后向接边
-            wnlist[n1].autoChangeBehindNode(wnlist[n1 + 1], help.getindex(wnlist, n1 + 2), sen[n1 + 1], 1)
+            wnlist[n1].autoChangeFrontNode(wnlist[n1 - 1], help.getindex(wnlist, n1 - 2), newsen[n1 - 1], 1)
+        if n1 == 1 and (wnlist[0] is None): # 补充句首为停用词firstp调整的情况
+            wnlist[n1].firstp += 1
+        if n1!=len(newsen)-1: # 不是最后一位，连接后向接边
+            wnlist[n1].autoChangeBehindNode(wnlist[n1 + 1], help.getindex(wnlist, n1 + 2), newsen[n1 + 1], 1)
 
 def caluwordCount(n,senllist):
     wordCount = 0
@@ -78,7 +86,19 @@ def nodeConduct(wnode,activateSignal,formDelta):
             pair["isPass"]=True
             nodeConduct(pair["node"],activateSignal,wnode.caluForm) #同义边传导无衰减
 
+def caluAverageActivation(wordmap):
+    total=0
+    for n in wordmap:
+        total+=n.activation
+    global averageActivation
+    averageActivation=total/len(wordmap)
+
+def caluRelativeP(activation):
+    global averageActivation
+    return activation/averageActivation
+
 def getsenpair(wordmap):
+    caluAverageActivation(wordmap)
     senpair = []  # [{sen,P}]
     for n in wordmap:
         if n.activation>parameter.minactive and n.firstp>0: # 从每个备选词出发试图产生句子
@@ -87,28 +107,24 @@ def getsenpair(wordmap):
             stopword=node.genStopWord(n.frontStop)
             if not stopword is None:
                 sen.append(stopword)
-            nextword(n,sen,n.firstp,senpair) # 传过去的n是已经确定要添加的
+            nextword(n,sen,n.firstp*caluRelativeP(n.activation),senpair) # 传过去的n是已经确定要添加的
     return senpair
 
 def nextword(n,sen,p,senpair):
     sen.append(n.word)
     isEnd=True # 是否到达本次递归结束时（找不到下一个词）
 
-    for nunion in n.behindNode:
-        newp=p*lang.equBayes(n.wordCount, nunion["count"])
-        if n.activation>parameter.minactive:
-            if len(sen)>40:
-                break
-            if lang.isRepeat(sen):
-                break
-            #if len(sen)>5 and p<parameter.minp:
-            #    break
-            isEnd=False #能找到一个就不结束
-            # 产生过渡停用词
-            stopword=node.genStopWord(nunion["stopList"])
-            if not stopword is None:
-                sen.append(stopword)
-            nextword(nunion["node"],sen[:],newp,senpair)
+    if (not len(sen)>30) and (not lang.isRepeat(sen)) and (not (len(sen)>5 and p<parameter.minp)):
+        for nunion in n.behindNode:
+            if nunion["node"].activation>parameter.minactive:
+                isEnd=False #能找到一个就不结束
+                newp = p * lang.equBayes(nunion["node"].wordCount, nunion["count"]) * caluRelativeP(nunion["node"].activation)
+                newsen=sen[:]
+                # 产生过渡停用词
+                stopword=node.genStopWord(nunion["stopList"])
+                if not stopword is None:
+                    newsen.append(stopword)
+                nextword(nunion["node"],newsen,newp,senpair)
 
     if isEnd: #一个都找不到，即结束
         if p>=parameter.minp:
@@ -122,6 +138,8 @@ def getmaxsen(senpair):
     return help.getmax(senpair,"sen")
 
 def clearActivation(wordmap):
+    global averageActivation
+    averageActivation=0
     for n in wordmap:
         n.activation=0
         n.caluForm=''
