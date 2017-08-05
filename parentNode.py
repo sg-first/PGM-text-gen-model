@@ -68,7 +68,7 @@ class pnBlock:
     def isStrNotNone(self):
         return (not self.behindNodeStr is None) and (not self.frontNoneStr is None)
 
-    def dirChangeNode(self,sen,apnBlock,delta,nodelist):
+    def dirChangeNode(self,sen,apnBlock,delta,nodelist): # Private
         # 首先通过sen从已有的接边里找，找到就直接改P
         for nunion in nodelist:
             if nunion["pnBlock"].sen == sen:
@@ -79,13 +79,13 @@ class pnBlock:
         nodelist.append(newelm)
         return newelm
 
-    def dirChangeBehindNode(self, sen, apnBlock, delta):
+    def dirChangeBehindNode(self, sen, apnBlock, delta): # 用于后期
         self.dirChangeNode(sen,apnBlock,delta,self.behindNode)
 
-    def dirChangeFrontNode(self,sen,apnBlock,delta):
+    def dirChangeFrontNode(self,sen,apnBlock,delta): # 用于后期
         self.dirChangeNode(sen,apnBlock,delta,self.frontNode)
 
-    def changeNode(self, apnblock, delta, nodelist):  # Private
+    def changeNode(self, apnblock, delta, nodelist): # Private
         # 训练集中所有句子都视为不同，所以在接边创建阶段没有相同的接边可供合并
         newelm={"pnBlock":apnblock,"P":delta,"isPass":False}
         nodelist.append(newelm)

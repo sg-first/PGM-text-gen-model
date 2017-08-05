@@ -40,25 +40,49 @@ for b in network:
     training.relTrain(b,wordmap,allpnode)
 print("allpnode向下激活权值训练完成！")
 
-print("底层生成开始！")
-# 底层的生成部分测试：直接激活一些词生成句子，假设选择wordmap[3]和wordmap[5]
-wordmapOp.nodeConduct(wordmap[3],15,[{'coefficient':1,'variable':'a'}])
-wordmapOp.nodeConduct(wordmap[8],15,[{'coefficient':1,'variable':'a'}])
-print("开始产生句子啦！关注无限扩展！")
-senpair=wordmapOp.getsenpair(wordmap)
-print(help.tojson(senpair))
-wordmapOp.clearActivation(wordmap)
+def findNode(word):
+    for i in wordmap:
+        if i.word==word:
+            return i
 
-print("直接生成一个块")
-blist=[network[3]]
-print(networkOp.genChapter(blist,wordmap))
+def findpNode(word):
+    for i in allpnode:
+        if i.word==word:
+            return i
 
-print("高层生成开始！")
-# 生成部分：先选定摘要块，自动向下生成，假设选择network[3]
-networkOp.blockConduct(network[2],20)
-print("开始产生啦！关注无限扩展！")
-blpair=networkOp.getblpair(network)
-blist=networkOp.getmaxblist(blpair)
-print("开始产生句子啦！关注无限扩展！")
-print(networkOp.genChapter(blist,wordmap))
-networkOp.clearActivation(network)
+def printAllpNode():
+    for i in allpnode:
+        print(i.word)
+
+def findBlock(sen):
+    for i in network:
+        if i.sen==sen:
+            return i
+
+def clear():
+    wordmapOp.clearActivation(wordmap)
+    networkOp.clearActivation(network)
+
+def blistGen(blist): # 直接按顺序生成块序列，不传导
+    return networkOp.genChapter(blist,wordmap)
+
+def blockConductGen(blist,activationList): # 传导后生成块序列
+    for i in range(len(blist)):
+        networkOp.blockConduct(blist[i],activationList[i])
+    blpair=networkOp.getblpair(network)
+    blist=networkOp.getmaxblist(blpair)
+    result=networkOp.genChapter(blist,wordmap)
+    networkOp.clearActivation(network)
+    return result
+
+def nodeConductGen(nlist,activationList):
+    tool=[{'coefficient':1,'variable':'a'}]
+    for i in range(len(nlist)):
+        wordmapOp.nodeConduct(nlist[i],activationList[i],tool)
+    senpair=wordmapOp.getsenpair(wordmap)
+    print(help.tojson(senpair))
+    wordmapOp.clearActivation(wordmap)
+    sen=wordmapOp.getmaxsen(senpair)
+    return help.listToStr(sen)
+
+# 另外还有常用操作，如实例化pnBlock，改变firstp，添加接边。均可以在import parentNode后手动进行，这里不再提供应用级接口
