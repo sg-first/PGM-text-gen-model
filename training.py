@@ -9,7 +9,8 @@ weightIndex={} # 映射原文件名到目标变量
 slackVariable=[]
 
 def simplify(condition): # 防止规划过程中递归过深，化简约束条件
-    condition = mergeCoefficient(condition)
+    if len(condition)!=1:
+        condition = mergeCoefficient(condition)
     newCondition=''
     for m in range(len(condition)):
         newCondition+=str(condition[m]['coefficient'])+'*'+condition[m]['variable']

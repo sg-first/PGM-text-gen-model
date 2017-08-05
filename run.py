@@ -43,17 +43,19 @@ print("allpnode向下激活权值训练完成！")
 print("底层生成开始！")
 # 底层的生成部分测试：直接激活一些词生成句子，假设选择wordmap[3]和wordmap[5]
 wordmapOp.nodeConduct(wordmap[3],15,[{'coefficient':1,'variable':'a'}])
-wordmapOp.nodeConduct(wordmap[5],15,[{'coefficient':1,'variable':'a'}])
+wordmapOp.nodeConduct(wordmap[8],15,[{'coefficient':1,'variable':'a'}])
 print("开始产生句子啦！关注无限扩展！")
 senpair=wordmapOp.getsenpair(wordmap)
-#sen=wordmapOp.getmaxsen(senpair)
-#print(help.listToStr(sen))
 print(help.tojson(senpair))
 wordmapOp.clearActivation(wordmap)
 
+print("直接生成一个块")
+blist=[network[3]]
+print(networkOp.genChapter(blist,wordmap))
+
 print("高层生成开始！")
 # 生成部分：先选定摘要块，自动向下生成，假设选择network[3]
-networkOp.blockConduct(network[3],20)
+networkOp.blockConduct(network[2],20)
 print("开始产生啦！关注无限扩展！")
 blpair=networkOp.getblpair(network)
 blist=networkOp.getmaxblist(blpair)

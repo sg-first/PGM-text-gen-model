@@ -20,9 +20,9 @@ def genBlock(wordmap,sen,allpnode):
         # 产生全连接子节点
         for wnode in wnodeList:
             if parameter.radomWeight:
-                nw1.addsonNode(wnode,random.randint(1,50))
+                nw1.addsonNode(wnode,random.randint(1,parameter.initActivation*2))
             else:
-                nw1.addsonNode(wnode,6)
+                nw1.addsonNode(wnode,parameter.initActivation)
 
     return parentNode.pnBlock(block,strsen,sen)
 
@@ -43,13 +43,6 @@ def genNetwork(network,wordmap,allpnode,senlist):
         if b1 != len(blist) - 1:  # 不是最后一位，连接后向接边
             blist[b1].changeBehindNode(blist[b1 + 1], 1)
         network.append(blist[b1])
-
-def caluSimCount(sen,network): # 将相似度计数挪到接边合并中，该函数暂时弃用
-    count=0
-    for b in network:
-        if lang.isSim(sen,b.sen):
-            count+=1
-    return count
 
 def normalizedWeight(network,senllist):
     for b in network:
