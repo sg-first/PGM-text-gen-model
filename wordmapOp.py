@@ -39,7 +39,17 @@ def caluwordCount(n,senllist):
             wordCount += help.caluCount(sen, n.word)
     return wordCount
 
+def caluAverageFirstp(senllist):
+    senCount=0
+    wordCount=0
+    for senlist in senllist:
+        senCount+=len(senlist)
+        for sen in senlist:
+            wordCount+=len(sen)
+    return senCount/wordCount
+
 def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
+    averageFirstp=caluAverageFirstp(senllist)
     for n in wordmap:
         # 遍历wordmap，给所有node添加同义边
         for n2 in wordmap:
@@ -49,7 +59,9 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
                 n.addSynonyms(n2)
         # 正式的归一化过程
         n.wordCount=caluwordCount(n,senllist) # 首先计算该词在整个训练文本中出现的次数（由于停用词不会在wordmap中出现，所以数量上也不会把停用词算在内）
-        n.firstp /= n.wordCount # 句首次数归一化（使用等价贝叶斯后这也是真归一化）
+        # 句首次数归一化（使用等价贝叶斯）
+        n.firstp /= n.wordCount
+        n.firstp /= averageFirstp
         # 边权归一化
         for nunion in n.behindNode:
             nunion["count"]=nunion["P"]

@@ -8,6 +8,8 @@ def caluCount(list,elm):
     return count
 
 def listToStr(list,sep=''):
+    if list is None:
+        return ""
     return sep.join(list)
 
 def readTXT(path):

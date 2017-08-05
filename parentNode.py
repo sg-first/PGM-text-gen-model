@@ -1,5 +1,6 @@
 import node
 import wordmapOp
+import help
 
 #句级摘要对句子进行，得到的是所有摘要词组成的摘要块。其中，摘要块元素为parentNode，负责激发它的子节点。当一个摘要块中的元素全部施行激发后，产生的就是
 #被摘要的句子。由于摘要块代表的是句子，所以摘要块之间存在接边。摘要块的集合即为network，通过用户指定激发数个摘要块（或自定义摘要块激发），network自动
@@ -100,6 +101,7 @@ class pnBlock:
         for pnode in self.block:
             pnode.activeSon()
         senpair = wordmapOp.getsenpair(wordmap)
+        print(help.tojson(senpair))
         if isClear:
             wordmapOp.clearActivation(wordmap)
         return wordmapOp.getmaxsen(senpair)
