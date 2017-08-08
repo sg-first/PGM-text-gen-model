@@ -135,7 +135,7 @@ def nextword(n,sen,p,senpair):
         for nunion in n.behindNode:
             if nunion["node"].activation>parameter.minactive:
                 isEnd=False #能找到一个就不结束
-                newp = p * lang.equBayes(nunion["node"].wordCount, nunion["count"]) * caluRelativeP(nunion["node"].activation)
+                newp = p * lang.equBayes(n.wordCount, nunion["count"]) * caluRelativeP(nunion["node"].activation)
                 newsen=sen[:]
                 # 产生过渡停用词
                 stopword=node.genStopWord(nunion["stopList"])
