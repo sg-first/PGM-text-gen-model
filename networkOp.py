@@ -114,7 +114,7 @@ def nextblock(b,blist,p,blpair):
             blpair.append({"blist":blist, "P":p})
 
 def getmaxblist(blpair):
-    return help.getmax(blpair,"blist")
+    return help.annealingSelection(blpair,"blist")
 
 # 注意，blist完全可以通过network中的元素自定义而不是通过传导生成
 def genChapter(blist,wordmap):

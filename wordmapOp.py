@@ -40,13 +40,13 @@ def caluwordCount(n,senllist):
     return wordCount
 
 def caluAverageFirstp(senllist):
-    senCount=0
+    help.trainingSize = 0 # 总句数
     wordCount=0
     for senlist in senllist:
-        senCount+=len(senlist)
+        help.trainingSize+=len(senlist)
         for sen in senlist:
             wordCount+=len(sen)
-    return senCount/wordCount
+    return help.trainingSize/wordCount
 
 def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
     averageFirstp=caluAverageFirstp(senllist)
@@ -152,7 +152,7 @@ def nextword(n,sen,p,senpair):
             senpair.append({"sen":sen,"P":p})
 
 def getmaxsen(senpair):
-    return help.getmax(senpair,"sen")
+    return help.annealingSelection(senpair,"sen")
 
 def clearActivation(wordmap):
     global averageActivation

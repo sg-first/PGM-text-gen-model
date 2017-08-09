@@ -1,4 +1,9 @@
 import json
+import random
+import math
+import parameter
+
+trainingSize = 0
 
 def caluCount(list,elm):
     count=0
@@ -44,10 +49,20 @@ def tojson(list):
 
 def getmax(senpair,key):
     maxelm={key:None,"P":0}
-    for i in senpair:
-        if i["P"]>maxelm["P"]:
-            maxelm=i
-    return maxelm[key]
+    maxsub=-1
+    for i in range(len(senpair)):
+        if senpair[i]["P"]>maxelm["P"]:
+            maxelm=senpair[i]
+            maxsub=i
+    return maxsub
+
+def annealingSelection(senpair,key):
+    while 1:
+        nowsub=getmax(senpair,key)
+        if isAccept():
+            return senpair[nowsub][key]
+        else:
+            del senpair[nowsub]
 
 def repeatSplit(list,seq):
     listB=[]
@@ -76,3 +91,7 @@ def isNum(num):
         return True
     except ValueError:
         return False
+
+def isAccept():
+    r=random.uniform(0, 1)
+    return math.exp((-parameter.selectActivation)/trainingSize)>r

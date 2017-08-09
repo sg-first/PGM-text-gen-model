@@ -7,7 +7,8 @@ stackWeights=0.9 # 叠加接边衰减
 repeatLimit=1 # 生成实词的重复次数限制
 maxLength=40 # 生成的句子的最大长度
 topicTolerance=5 # 允许概率低于最低生成概率的最大句子长度
-initActivation=6 #初激活值
+initActivation=6 # 初激活值
+selectActivation=50 # 选取摘要块序列的活跃度参数，越大越倾向于选择概率小的
 
 simThreshold=0.85 # 句子被视为相似的阈值
 activeThresholdB=2  # 块节点的可激活阈值
