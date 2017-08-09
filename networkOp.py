@@ -109,7 +109,8 @@ def nextblock(b,blist,p,blpair):
     blist.append(b)
     isEnd = True  # 是否到达本次递归结束时（找不到下一个块）
 
-    if (not len(blist) > parameter.maxLength) and (not (len(blist)>parameter.topicToleranceB and p<parameter.minpB)): # 由于simThreshold设置较大，暂时不置isRepeat条件
+    # 由于simThreshold设置较大（较难出现三循环连接），这里暂时不置isRepeat条件
+    if (not len(blist) > parameter.maxLength) and (not (len(blist)>parameter.topicToleranceB and p<parameter.minpB)):
         for nunion in b.behindNode:
             if b.activation > parameter.minactiveB:
                 isEnd = False  # 能找到一个就不结束
