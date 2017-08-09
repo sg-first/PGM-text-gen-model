@@ -44,6 +44,9 @@ def genNetwork(network,wordmap,allpnode,senlist):
             blist[b1].changeBehindNode(blist[b1 + 1], 1)
         network.append(blist[b1])
 
+def caluAverageFirstp(senllist):
+    return len(senllist)/help.trainingSize
+
 def normalizedWeight(network,senllist):
     for b in network:
         # 遍历network，将所有相似块的接边合并。同时进行相似计数
@@ -65,8 +68,11 @@ def normalizedWeight(network,senllist):
                     # 二者合并完成后，使用nodestr标记
                     b.relgenNodeStr()
                     b2.relgenNodeStr()
+
+        averageFirstp = caluAverageFirstp(senllist)
         # 正式的归一化过程
-        b.firstp/=b.simCount  # 句首次数归一化
+        b.firstp /= b.simCount  # 句首次数归一化
+        b.firstp /= averageFirstp
         # 边权归一化
         for sunion in b.behindNode:
             sunion["count"]=sunion["P"]
@@ -96,20 +102,21 @@ def getblpair(network): # 生成概率大的块序列
     for b in network:
         if b.activation > parameter.minactiveB and b.firstp > 0:  # 从每个备选块出发试图产生块序列
             blist=[] # 从b出发试图产生的块序列
-            nextblock(b, blist, b.firstp, blpair) # 传过去的n是已经确定要添加的
+            nextblock(b, blist, b.firstp, blpair) # 传过去的b是已经确定要添加的（这里与下层实现不同，没有乘关于权值的均值概率）
     return blpair
 
 def nextblock(b,blist,p,blpair):
     blist.append(b)
     isEnd = True  # 是否到达本次递归结束时（找不到下一个块）
 
-    for nunion in b.behindNode:
-        if b.activation > parameter.minactiveB: # and newp>parameter.minpB: # 这里目前的实现并没有使用和单词层完全一样的计算方法
-            isEnd = False  # 能找到一个就不结束
-            newp = p * lang.equBayes(b.simCount, nunion["count"])
-            nextblock(nunion["pnBlock"], blist, newp, blpair)
+    if (not len(blist) > parameter.maxLength) and (not (len(blist)>parameter.topicToleranceB and p<parameter.minpB)): # 由于simThreshold设置较大，暂时不置isRepeat条件
+        for nunion in b.behindNode:
+            if b.activation > parameter.minactiveB:
+                isEnd = False  # 能找到一个就不结束
+                newp = p * lang.equBayes(b.simCount, nunion["count"]) # （这里与下层实现不同，没有乘关于权值的均值概率）
+                nextblock(nunion["pnBlock"], blist, newp, blpair)
 
-    if isEnd: #一个都找不到，即结束
+    if isEnd: # 一个都找不到，即结束
         if p >= parameter.minpB:
             blpair.append({"blist":blist, "P":p})
 

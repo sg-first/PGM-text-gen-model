@@ -41,7 +41,7 @@ def caluwordCount(n,senllist):
 
 def caluAverageFirstp(senllist):
     help.trainingSize = 0 # 总句数
-    wordCount=0
+    wordCount = 0
     for senlist in senllist:
         help.trainingSize+=len(senlist)
         for sen in senlist:
@@ -49,7 +49,7 @@ def caluAverageFirstp(senllist):
     return help.trainingSize/wordCount
 
 def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
-    averageFirstp=caluAverageFirstp(senllist)
+    averageFirstp = caluAverageFirstp(senllist)
     for n in wordmap:
         # 遍历wordmap，给所有node添加同义边
         for n2 in wordmap:
@@ -67,7 +67,7 @@ def normalizedWeight(wordmap,senllist): # 归一化句首概率和边权
             nunion["count"]=nunion["P"]
             nunion["P"] = help.limitDigits(nunion["P"] / n.wordCount*parameter.stackWeights) #使用等价贝叶斯后，P仅作为边权，而句子概率使用count计算
             for sw in nunion["stopList"]:
-                sw.p/=n.wordCount #停用词依然真归一化
+                sw.p/=n.wordCount # 停用词依然真归一化
         for nunion in n.frontNode:
             nunion["count"] = nunion["P"]
             nunion["P"] = help.limitDigits(nunion["P"] / n.wordCount*parameter.stackWeights)
@@ -78,7 +78,7 @@ def nodeConduct(wnode,activateSignal,formDelta):
     if activateSignal<parameter.activeThreshold:
         return
     # 条件符合，进行传导
-    wnode.activation+=activateSignal #乘边权的过程放在递归前，如下
+    wnode.activation+=activateSignal # 乘边权的过程放在递归前，如下
     if len(wnode.caluForm)!=0 and len(formDelta)==1 and node.getLastForm(wnode.caluForm)['variable']==formDelta[0]['variable']:
         node.getLastForm(wnode.caluForm)['coefficient']+=formDelta[0]['coefficient']
     else:
@@ -118,7 +118,7 @@ def getsenpair(wordmap):
     caluAverageActivation(wordmap)
     senpair = []  # [{sen,P}]
     for n in wordmap:
-        if n.activation>parameter.minactive and n.firstp>0: # 从每个备选词出发试图产生句子
+        if n.activation>parameter.minactive and n.firstp > 0: # 从每个备选词出发试图产生句子
             sen = [] # 从n出发试图产生的句子
             # 产生句首停用词
             stopword=node.genStopWord(n.frontStop)
