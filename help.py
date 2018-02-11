@@ -47,7 +47,7 @@ def splitList(list,sep,result=None):
 def tojson(list):
     return json.dumps(list,ensure_ascii=False)
 
-def getmax(senpair,key):
+def getmax(senpair,key): # 在对列表中寻找概率最大的对，对可以是块序列或词序列，只要有P字段即可
     maxelm={key:None,"P":0}
     maxsub=-1
     for i in range(len(senpair)):
@@ -56,10 +56,12 @@ def getmax(senpair,key):
             maxsub=i
     return maxsub
 
-def annealingSelection(senpair,key):
+def annealingSelection(senpair,key): # 判断是否接受概率最大的对，对可以是块序列或词序列（key为序列类型），只要有P字段即可
+    if len(senpair)==0:
+        return []
     while 1:
         nowsub=getmax(senpair,key)
-        if isAccept():
+        if len(senpair)==1 or isAccept():
             return senpair[nowsub][key]
         else:
             del senpair[nowsub]

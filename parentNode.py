@@ -2,7 +2,7 @@ import node
 import wordmapOp
 import help
 
-#句级摘要对句子进行，得到的是所有摘要词组成的摘要块。其中，摘要块元素为parentNode，负责激发它的子节点。当一个摘要块中的元素全部施行激发后，产生的就是
+#句级摘要对句子进行，得到的是所有摘要词组成的摘要块。其中，摘要块的元素为parentNode，负责激发它的子节点。当一个摘要块中的元素全部施行激发后，产生的就是
 #被摘要的句子。由于摘要块代表的是句子，所以摘要块之间存在接边。摘要块的集合即为network，通过用户指定激发数个摘要块（或自定义摘要块激发），network自动
 #产生一个摘要块序列，序列中每个摘要块的每个元素向下激发，产生实际的句子，连接起来即为篇章
 
@@ -39,11 +39,11 @@ def findornew(allpnode,word):
         nw1.sub=len(allpnode)-1
     return nw1
 
-# 注意，pnBlock的集合，即network可完全通过allpnode中的元素自定义而不用经由训练文本自动生成
+# 注意，pnBlock的集合（即network）可完全通过allpnode中的元素自定义而不用经由训练文本自动生成
 class pnBlock:
     sen = ""  # 标记的所描述的那个原始句子
     senList = None
-    block = None #[parentNode]
+    block = None # [parentNode]
     behindNode = None  # [{pnBlock,P,isPass}]，后向接边
     frontNode = None  # 前向接边
     behindNodeStr = None
@@ -100,8 +100,8 @@ class pnBlock:
     def activeBlock(self,wordmap,isClear=True):
         for pnode in self.block:
             pnode.activeSon()
-        senpair = wordmapOp.getsenpair(wordmap)
-        print(help.tojson(senpair))
+        senpair = wordmapOp.getsenpair(wordmap) # 得到所有可能的句对
+        print(help.tojson(senpair)) # fix:debug
         if isClear:
             wordmapOp.clearActivation(wordmap)
         return wordmapOp.getmaxsen(senpair)

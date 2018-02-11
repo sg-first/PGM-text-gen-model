@@ -129,7 +129,8 @@ def genChapter(blist,wordmap):
     rsen=""
     for b in blist:
         sen=b.activeBlock(wordmap)
-        rsen+=help.listToStr(sen)+"。"
+        if not len(sen)==0:
+            rsen+=help.listToStr(sen)+"。"
     return rsen
 
 def clearActivation(network):
